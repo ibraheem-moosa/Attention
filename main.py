@@ -5,6 +5,7 @@ from torch.optim import SGD
 from torch.utils.data import Dataset, Subset, DataLoader
 
 import random
+import datetime
 
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss
@@ -69,7 +70,6 @@ class CrossEntropyLanguageModel(nn.Module):
 
 if __name__ == '__main__':
     ds = Text8DataSet('./text8', 10)
-    print(len(ds))
     ds_len = len(ds)
     indices = list(range(ds_len))
     random.seed(42)
@@ -82,27 +82,30 @@ if __name__ == '__main__':
     va_indices = indices[-va_ds_len-te_ds_len:-te_ds_len]
     te_indices = indices[-te_ds_len:]
     tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
-    tr_dl = DataLoader(tr_ds, batch_size=2, shuffle=True, drop_last=True)
-    va_dl = DataLoader(va_ds, batch_size=2)
+    bs = 128
+    tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
+    va_dl = DataLoader(va_ds, batch_size=bs)
+    print(len(tr_dl))
 
     hidden_size = 8
     num_layers = 1
     model = SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
     optimizer = SGD(model.parameters(), lr=1e-3, nesterov=True, momentum=0.9)
     loss = CrossEntropyLanguageModel()
-    x, y = next(iter(tr_dl))
-    out = model(x)
-    print(loss(out, y))
 
     trainer = create_supervised_trainer(model, optimizer, loss)
     evaluator = create_supervised_evaluator(model, metrics={'acc': Accuracy(), 'ce': Loss(loss)})
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_tr_loss(trainer):
-        print('Epoch {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.output))
+        if trainer.state.iteration % 100 == 0:
+            print(datetime.datetime.now())
+            print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
-        print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce'])) 
+        print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
+
+    trainer.run(tr_dl, max_epochs=10)
