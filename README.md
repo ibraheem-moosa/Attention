@@ -14,15 +14,23 @@ The goal of this project is threefold.
 - [] Implement a basic attention base model.
 - [] Document results from experiment.
 
-# Detailed Plane
+# Detailed Plan
 ## Dataset
 Dataset should be well established. We should look at nlpprogress for idea.
-I think I can later throw in the protein dataset. We must look if there is
-already one. 
+We can later throw in a protein dataset.
 
 First we should select a small dataset. I think we should first focus on
 language modeling, later we can investigate classification and translation.
 
 For simplicity I think we should start with character level language model
 datasets. From [nlpprogress](http://nlpprogress.com/english/language_modeling.html)
-we have two options Hutter Prize and Text8. Text8 seems simpler lets start with that.
+we have two options Hutter Prize and Text8.
+
+Text8 is a single text file with 10^8 characters.
+
+## Ignite
+We will first write a simple RNN model.
+
+[Text8](http://mattmahoney.net/dc/text8.zip) seems simpler, lets start with that.
+
+# Resouces
