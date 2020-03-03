@@ -68,7 +68,7 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=bs)
     print(len(tr_dl))
 
-    hidden_size = 8
+    hidden_size = 128
     num_layers = 1
     model = SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
     optimizer = SGD(model.parameters(), lr=1e0, nesterov=True, momentum=0.9)
