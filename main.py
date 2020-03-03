@@ -92,4 +92,4 @@ if __name__ == '__main__':
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
 
-    trainer.run(tr_dl, max_epochs=10)
+    trainer.run(tr_dl, max_epochs=25)
