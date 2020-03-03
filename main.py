@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch.optim import SGD
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import Dataset, Subset, DataLoader
 
 import random
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     model = SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
     optimizer = SGD(model.parameters(), lr=1e0, nesterov=True, momentum=0.9)
     loss = CrossEntropyLanguageModel()
+    scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
 
     trainer = create_supervised_trainer(model, optimizer, loss, device=device)
     metrics = {
@@ -94,5 +96,6 @@ if __name__ == '__main__':
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
+        scheduler.step(metrics['ce'])
 
     trainer.run(tr_dl, max_epochs=25)
