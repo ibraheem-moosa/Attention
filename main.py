@@ -81,7 +81,7 @@ if __name__ == '__main__':
             'ce': Loss(loss)}
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
-    @trainer.on(Events.ITERATION_COMPLETED(every=10))
+    @trainer.on(Events.ITERATION_COMPLETED(every=50))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
