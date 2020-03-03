@@ -36,6 +36,13 @@ class SimpleRNNLanguageModel(nn.Module):
         x = self.final(F.relu(x))
         return x
 
+class RNNSharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
+    "A one directional RNN that shares input and output embedding and predicts next character."
+
+    def __init__(self, vocab_size, hidden_size, num_layers):
+        super(RNNSharedEmbeddingLanguageModel, self).__init__(vocab_size, hidden_size, num_layers)
+        self.final.weight = self.embedding.weight
+
 
 class CrossEntropyLanguageModel(nn.Module):
     def __init__(self):
@@ -71,7 +78,7 @@ if __name__ == '__main__':
 
     hidden_size = 128
     num_layers = 1
-    model = SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
+    model = RNNSharedEmbeddingLanguageModel(ds.vocab_size, hidden_size, num_layers)
     optimizer = SGD(model.parameters(), lr=1e0, nesterov=True, momentum=0.9)
     loss = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
