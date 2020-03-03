@@ -121,6 +121,7 @@ if __name__ == '__main__':
     bs = 8192
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=bs)
+    te_dl = DataLoader(te_ds, batch_size=bs)
     print(len(tr_dl))
 
     hidden_size = 8
@@ -130,7 +131,11 @@ if __name__ == '__main__':
     loss = CrossEntropyLanguageModel()
 
     trainer = create_supervised_trainer(model, optimizer, loss, device=device)
-    evaluator = create_supervised_evaluator(model, metrics={'acc': Accuracy(), 'ce': Loss(loss)}, device=device)
+    metrics = {
+            'acc': Accuracy(
+                output_transform=lambda y_pred: (y_pred[0].view((-1, ds.vocab_size)), y_pred[1].view((-1,)))),
+            'ce': Loss(loss)}
+    evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_tr_loss(trainer):
