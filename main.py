@@ -71,7 +71,7 @@ if __name__ == '__main__':
     hidden_size = 8
     num_layers = 1
     model = SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
-    optimizer = SGD(model.parameters(), lr=1e-1, nesterov=True, momentum=0.9)
+    optimizer = SGD(model.parameters(), lr=1e0, nesterov=True, momentum=0.9)
     loss = CrossEntropyLanguageModel()
 
     trainer = create_supervised_trainer(model, optimizer, loss, device=device)
