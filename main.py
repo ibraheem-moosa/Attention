@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import Dataset, Subset, DataLoader
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     hidden_size = 128
     num_layers = 1
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
-    optimizer = SGD(model.parameters(), lr=1e-3, nesterov=True, momentum=0.9)
+    optimizer = Adam(model.parameters())
     loss = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
 
