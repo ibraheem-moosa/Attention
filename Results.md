@@ -1,5 +1,6 @@
 # SimpleRNN
 
+## Word based
 | Vocab Size | Sentence Length | Hidden Size | Batch Size | Learning Rate | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Initialization |
 | ---------- | --------------- | ----------- | ---------- | ------------- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------------- |
 | 10000      | 10              | 8           | 2048       | 1e0           | -         | SGD,N,M=.9| 25     | 16.03  | 16.04  | 4.4626  | 4.4634  | -              |
@@ -9,3 +10,9 @@
 | 10000      | 5               | 128         | 128        | 1e0           | Plat,P=2  | SGD,N,M=.9| 25     | 16.75  | 16.79  | 4.3655  | 4.3679  | -              |
 | 10000      | 20              | 128         | 128        | 1e0           | Plat,P=2  | SGD,N,M=.9| 25     | 17.47  | 17.45  | 4.3218  | 4.3265  | -              |
 | 10000      | 20              | 128         | 128        | 1e-1          | Plat,P=2  | SGD,N,M=.9| 25     | 17.79  | 17.74  | 4.3064  | 4.3106  | Xavier Uniform |
+| 10000      | 20              | 128         | 128        | 1e-1          | Plat,P=2  | SGD,N,M=.9| 25     | 18.03  | 18.00  | 4.2796  | 4.2851  | Xavier Normal  |
+
+## Character Based
+| Sentence Length | Hidden Size | Batch Size | Learning Rate | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Initialization |
+| --------------- | ----------- | ---------- | ------------- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------------- |
+| 100             | 128         | 128        | 1e-1          | Plat,P=2  | SGD,N,M=.9| 25     | 54.02  | 54.01  | 1.5212  | 1.5216  | Xavier Normal  |
