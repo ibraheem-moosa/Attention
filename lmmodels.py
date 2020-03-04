@@ -8,7 +8,7 @@ class SimpleRNNLanguageModel(nn.Module):
 
     def __init__(self, vocab_size, hidden_size, num_layers):
         super(SimpleRNNLanguageModel, self).__init__()
-        self.embedding = nn.Embedding(vocab_size, hidden_size, max_norm=1.0) 
+        self.embedding = nn.Embedding(vocab_size, hidden_size, max_norm=1.0)
         self.rnn = nn.RNN(
                 input_size=hidden_size,
                 hidden_size=hidden_size,
