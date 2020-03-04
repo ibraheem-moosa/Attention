@@ -20,7 +20,7 @@ class SimpleRNNLanguageModel(nn.Module):
         # do initalization
         for name, param in self.rnn.named_parameters():
             if name.startswith('weight_hh'):
-                nn.init.kaiming_normal_(param)
+                nn.init.eye_(param)
             if name.startswith('weight_ih'):
                 nn.init.kaiming_normal_(param)
         nn.init.kaiming_normal_(self.final.weight)
