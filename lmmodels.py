@@ -20,10 +20,10 @@ class SimpleRNNLanguageModel(nn.Module):
         # do initalization
         for name, param in self.rnn.named_parameters():
             if name.startswith('weight_hh'):
-                nn.init.kaiming_uniform_(param)
+                nn.init.kaiming_normal_(param)
             if name.startswith('weight_ih'):
-                nn.init.kaiming_uniform_(param)
-        nn.init.kaiming_uniform_(self.final.weight)
+                nn.init.kaiming_normal_(param)
+        nn.init.kaiming_normal_(self.final.weight)
 
     "Input shape: (bs, seq len)"
     def forward(self, x):
