@@ -13,6 +13,7 @@ class SimpleRNNLanguageModel(nn.Module):
                 input_size=hidden_size,
                 hidden_size=hidden_size,
                 num_layers=num_layers,
+                nonlinearity='relu',
                 bias=False,
                 batch_first=True)
         self.final = nn.Linear(hidden_size, vocab_size, bias=False)
