@@ -13,35 +13,7 @@ from ignite.engine import Events, create_supervised_trainer, create_supervised_e
 from ignite.metrics import Accuracy, Loss
 
 import text8dataset
-
-
-class SimpleRNNLanguageModel(nn.Module):
-    "A simple one directional RNN that predicts next character."
-
-    def __init__(self, vocab_size, hidden_size, num_layers):
-        super(SimpleRNNLanguageModel, self).__init__()
-        self.embedding = nn.Embedding(vocab_size, hidden_size) 
-        self.rnn = nn.RNN(
-                input_size=hidden_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                bias=False,
-                batch_first=True)
-        self.final = nn.Linear(hidden_size, vocab_size, bias=False)
-
-    "Input shape: (bs, seq len)"
-    def forward(self, x):
-        x = self.embedding(x)
-        x, h_n = self.rnn(x)
-        x = self.final(F.relu(x))
-        return x
-
-class RNNSharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
-    "A one directional RNN that shares input and output embedding and predicts next character."
-
-    def __init__(self, vocab_size, hidden_size, num_layers):
-        super(RNNSharedEmbeddingLanguageModel, self).__init__(vocab_size, hidden_size, num_layers)
-        self.final.weight = self.embedding.weight
+import lmmodels
 
 
 class CrossEntropyLanguageModel(nn.Module):
@@ -78,7 +50,7 @@ if __name__ == '__main__':
 
     hidden_size = 128
     num_layers = 1
-    model = RNNSharedEmbeddingLanguageModel(ds.vocab_size, hidden_size, num_layers)
+    model = lmmodels.RNNSharedEmbeddingLanguageModel(ds.vocab_size, hidden_size, num_layers)
     optimizer = SGD(model.parameters(), lr=1e0, nesterov=True, momentum=0.9)
     loss = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
