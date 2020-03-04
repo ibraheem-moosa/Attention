@@ -31,7 +31,7 @@ class Text8CharDataSet(Dataset):
         return self.length
 
 class Text8WordDataSet(Dataset):
-    def __init__(self, path, seq_len, max_vocab_size=None):
+    def __init__(self, path, seq_len=10, max_vocab_size=None):
         super(Text8WordDataSet, self).__init__()
         self.seq_len = seq_len
         with open(path) as f:

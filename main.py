@@ -56,7 +56,7 @@ class CrossEntropyLanguageModel(nn.Module):
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    ds = text8dataset.Text8WordDataSet('./text8', 10, max_vocab_size=10000)
+    ds = text8dataset.Text8WordDataSet('./text8', seq_len=10, max_vocab_size=10000)
     ds_len = len(ds)
     print(ds_len, ds.vocab_size)
     indices = list(range(ds_len))
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     hidden_size = 128
     num_layers = 1
-    model = RNNSharedEmbeddingLanguageModel(ds.vocab_size, hidden_size, num_layers)
+    model = SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
     optimizer = SGD(model.parameters(), lr=1e0, nesterov=True, momentum=0.9)
     loss = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
