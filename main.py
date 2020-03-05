@@ -48,7 +48,7 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=bs)
     print(len(tr_dl))
 
-    hidden_size = 2
+    hidden_size = 4
     num_layers = 1
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
     optimizer = Adam(model.parameters())
