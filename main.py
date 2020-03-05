@@ -48,9 +48,10 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=bs)
     print(len(tr_dl))
 
-    hidden_size = 4
+    hidden_size = 128
+    emb_size = 4
     num_layers = 1
-    model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, hidden_size, num_layers)
+    model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers)
     optimizer = Adam(model.parameters())
     loss = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
