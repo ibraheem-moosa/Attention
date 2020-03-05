@@ -49,7 +49,7 @@ if __name__ == '__main__':
     print(len(tr_dl))
 
     hidden_size = 128
-    emb_size = 4
+    emb_size = 8
     num_layers = 1
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers)
     optimizer = Adam(model.parameters())
