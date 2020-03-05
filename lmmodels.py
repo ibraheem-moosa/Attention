@@ -10,7 +10,7 @@ class SimpleRNNLanguageModel(nn.Module):
         super(SimpleRNNLanguageModel, self).__init__()
         self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
         self.rnn = nn.RNN(
-                input_size=hidden_size,
+                input_size=emb_size,
                 hidden_size=hidden_size,
                 num_layers=num_layers,
                 nonlinearity='relu',
