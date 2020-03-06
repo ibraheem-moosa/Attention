@@ -49,7 +49,7 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=bs)
     print(len(tr_dl))
 
-    hidden_size = 512
+    hidden_size = 1024
     emb_size = 16
     num_layers = 1
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
