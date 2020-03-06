@@ -83,12 +83,15 @@ if __name__ == '__main__':
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_va_loss(trainer):
-        evaluator.run(tr_dl)
-        metrics = evaluator.state.metrics
-        print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
         scheduler.step(metrics['ce'])
+
+    @trainer.on(Events.COMPLETED)
+    def log_tr_loss(trainer):
+        evaluator.run(tr_dl)
+        metrics = evaluator.state.metrics
+        print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
 
     trainer.run(tr_dl, max_epochs=25)
