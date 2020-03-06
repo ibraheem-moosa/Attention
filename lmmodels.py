@@ -6,11 +6,11 @@ import torch.nn.functional as F
 class SimpleRNNLanguageModel(nn.Module):
     "A simple one directional RNN that predicts next character."
 
-    def __init__(self, vocab_size, hidden_size, num_layers):
+    def __init__(self, vocab_size, emb_size, hidden_size, num_layers):
         super(SimpleRNNLanguageModel, self).__init__()
-        self.embedding = nn.Embedding(vocab_size, hidden_size, max_norm=1.0)
+        self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
         self.rnn = nn.RNN(
-                input_size=hidden_size,
+                input_size=emb_size,
                 hidden_size=hidden_size,
                 num_layers=num_layers,
                 nonlinearity='relu',
@@ -37,7 +37,7 @@ class RNNSharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
     "A one directional RNN that shares input and output embedding and predicts next character."
 
     def __init__(self, vocab_size, hidden_size, num_layers):
-        super(RNNSharedEmbeddingLanguageModel, self).__init__(vocab_size, hidden_size, num_layers)
+        super(RNNSharedEmbeddingLanguageModel, self).__init__(vocab_size, hidden_size, hidden_size, num_layers)
         self.final.weight = self.embedding.weight
 
 
