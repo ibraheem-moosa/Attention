@@ -52,7 +52,7 @@ if __name__ == '__main__':
     emb_size = 16
     num_layers = 1
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers)
-    optimizer = Adam(model.parameters())
+    optimizer = Adam(model.parameters(), lr=1e-2)
     loss = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
 
