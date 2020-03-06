@@ -13,17 +13,17 @@ class SimpleRNNLanguageModel(nn.Module):
                 input_size=emb_size,
                 hidden_size=hidden_size,
                 num_layers=num_layers,
-                nonlinearity='relu',
+                nonlinearity='tanh',
                 bias=False,
                 batch_first=True)
         self.final = nn.Linear(hidden_size, vocab_size, bias=False)
         # do initalization
         for name, param in self.rnn.named_parameters():
             if name.startswith('weight_hh'):
-                nn.init.eye_(param)
+                nn.init.xavier_normal_(param)
             if name.startswith('weight_ih'):
-                nn.init.kaiming_normal_(param)
-        nn.init.kaiming_normal_(self.final.weight)
+                nn.init.xavier_normal_(param)
+        nn.init.xavier_normal_(self.final.weight)
 
     "Input shape: (bs, seq len)"
     def forward(self, x):
