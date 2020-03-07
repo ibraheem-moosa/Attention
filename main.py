@@ -60,7 +60,7 @@ if __name__ == '__main__':
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=22e-3)
     criterion = CrossEntropyLanguageModel()
-    lr_finder_baselr = 1e-3
+    lr_finder_baselr = 1e-4
     lr_finder_maxlr = 1e1
     lr_finder_steps = 100
     lr_finder_scheduler = LambdaLR(optimizer,
