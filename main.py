@@ -95,7 +95,8 @@ if __name__ == '__main__':
 
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
-    scheduler = OneCycleLR(optimizer, max_lr=2e-1, epochs=25, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
+    epochs = 50
+    scheduler = OneCycleLR(optimizer, max_lr=2e-1, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     trainer = Engine(update_model)
     metrics = {
             'acc': Accuracy(
@@ -122,4 +123,4 @@ if __name__ == '__main__':
         metrics = evaluator.state.metrics
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
 
-    trainer.run(tr_dl, max_epochs=25)
+    trainer.run(tr_dl, max_epochs=epochs)
