@@ -66,7 +66,7 @@ if __name__ == '__main__':
         y_pred = model(x)
         loss = criterion(y_pred, y)
         loss.backward()
-        clip_grad_norm_(model.parameters(), 1.0)
+        clip_grad_norm_(model.parameters(), 0.25)
         optimizer.step()
         return loss.item()
 
