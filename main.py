@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     hidden_size = 2048
     emb_size = 16
-    num_layers = 1
+    num_layers = 2
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
