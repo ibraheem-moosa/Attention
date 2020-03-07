@@ -43,18 +43,18 @@ if __name__ == '__main__':
     va_indices = indices[-va_ds_len-te_ds_len:-te_ds_len]
     te_indices = indices[-te_ds_len:]
     tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
-    bs = 1024
+    bs = 2048
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
     te_dl = DataLoader(te_ds, batch_size=va_bs)
     print(len(tr_dl))
 
-    hidden_size = 2048
+    hidden_size = 1024
     emb_size = 128
     num_layers = 1
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
-    optimizer = Adam(model.parameters(), lr=4e-3)
+    optimizer = Adam(model.parameters(), lr=16e-3)
     criterion = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         y_pred = model(x)
         loss = criterion(y_pred, y)
         loss.backward()
-        clip_grad_norm_(model.parameters(), 0.25)
+        clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         return loss.item()
 
