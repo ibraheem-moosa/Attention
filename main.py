@@ -33,7 +33,7 @@ class CrossEntropyLanguageModel(nn.Module):
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    ds = text8dataset.Text8WordDataSet(sys.argv[1], seq_len=20, max_vocab_size=10000)
+    ds = text8dataset.Text8WordDataSet(sys.argv[1], seq_len=20, max_vocab_size=10000, gap=1)
     ds_len = len(ds)
     print(ds_len, ds.vocab_size)
     indices = list(range(ds_len))
