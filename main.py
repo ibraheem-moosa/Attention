@@ -47,7 +47,7 @@ if __name__ == '__main__':
     va_indices = indices[-va_ds_len-te_ds_len:-te_ds_len]
     te_indices = indices[-te_ds_len:]
     tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
-    bs = 3584
+    bs = 3072
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         plt.show()
         sys.exit()
 
-    # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
     epochs = 25
     scheduler = OneCycleLR(optimizer, max_lr=5e-3, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
