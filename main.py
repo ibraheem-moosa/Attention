@@ -101,18 +101,19 @@ if __name__ == '__main__':
             'ce': Loss(criterion)}
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
+    @trainer.on(Events.ITERATION_COMPLETED)
+    def scheduler_step(trainer):
+        scheduler.step()
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
-
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
         scheduler.step(metrics['ce'])
-
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
         evaluator.run(tr_dl)
