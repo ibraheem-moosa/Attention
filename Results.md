@@ -42,14 +42,17 @@
 | 100   | 16     | 256    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 58.46  | 58.43  | 1.3445  | 1.3457  | KN+ID    | relu   |
 | 100   | 16     | 512    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 61.51  | 61.42  | 1.2286  | 1.2323  | KN+ID    | relu   |
 | 100   | 16     | 1024   | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 63.92  | 63.71  | 1.1448  | 1.1536  | KN+ID    | relu   |
+| 100   | 16     | 1024   | 7168| 5e-3  | 1.0   | 1c,.5,l   | Adam      | 25     | 63.79  | 63.48  | 1.1585  | 1.1697  | KN+ID    | relu   |
+| 100   | 16     | 1024   | 7168| 5e-3  | 1.0   | 1c,.5,l   | Adam      | 50     | 64.75  | 64.33  | 1.1264  | 1.1422  | KN+ID    | relu   |
 
 
 # Multi Layer RNN
 
 ## Word Based
-| N L | V Size | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
-| --- | ------ | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
-| 2   | 10000  | 20    | 128    | 1024   | 3584| 5e-3  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.70  | 20.46  | 3.9278  | 4.1366  | KN+ID    | relu   |
+| N L | V Size | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin | Gap |
+| --- | ------ | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ | --- |
+| 2   | 10000  | 20    | 128    | 1024   | 3584| 5e-3  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.70  | 20.46  | 3.9278  | 4.1366  | KN+ID    | relu   | 20  |
+| 4   | 10000  | 20    | 128    | 1024   | 3072| 1e-2  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.17  | 20.65  | 3.9897  | 4.1186  | KN+ID    | relu   | 20  |
 
 ## Character Based
 | N L | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
