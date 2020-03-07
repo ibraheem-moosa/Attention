@@ -50,11 +50,11 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=va_bs)
     print(len(tr_dl))
 
-    hidden_size = 1024
+    hidden_size = 2048
     emb_size = 128
     num_layers = 1
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
-    optimizer = Adam(model.parameters(), lr=8e-3)
+    optimizer = Adam(model.parameters(), lr=16e-3)
     criterion = CrossEntropyLanguageModel()
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
 
@@ -77,7 +77,7 @@ if __name__ == '__main__':
             'ce': Loss(criterion)}
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
-    @trainer.on(Events.ITERATION_COMPLETED(every=500))
+    @trainer.on(Events.ITERATION_COMPLETED(every=32))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
@@ -95,4 +95,4 @@ if __name__ == '__main__':
         metrics = evaluator.state.metrics
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
 
-    trainer.run(tr_dl, max_epochs=200)
+    trainer.run(tr_dl, max_epochs=400)
