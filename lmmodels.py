@@ -28,6 +28,7 @@ class SimpleRNNLanguageModel(nn.Module):
     "Input shape: (bs, seq len)"
     def forward(self, x):
         x = self.embedding(x)
+        self.rnn.flatten_parameters()
         x, h_n = self.rnn(x)
         x = self.final(F.relu(x))
         return x
