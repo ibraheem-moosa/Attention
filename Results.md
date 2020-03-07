@@ -20,6 +20,7 @@
 | 10000  | 20    | 128    | 128    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 18.83  | 18.78  | 4.2207  | 4.2289  | KN+ID    | relu   |
 | 10000  | 20    | 128    | 256    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 19.28  | 19.21  | 4.1871  | 4.2007  | KN+ID    | relu   |
 | 10000  | 20    | 128    | 512    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 19.93  | 19.68  | 4.1393  | 4.1678  | KN+ID    | relu   |
+| 10000  | 20    | 128    | 1024   | 3584| 22e-3 | 0.25  | Plat,P=2  | Adam      | 25     | 19.93  | 19.68  | 4.1393  | 4.1678  | KN+ID    | relu   |
 
 ## Character Based
 | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |

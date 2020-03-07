@@ -2,14 +2,18 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch.optim import SGD, Adam
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.nn.utils import clip_grad_norm_
+from torch.optim.lr_scheduler import ReduceLROnPlateau, LambdaLR, OneCycleLR
 from torch.utils.data import Dataset, Subset, DataLoader
 
+import sys
+import math
 import random
 import datetime
+import matplotlib.pyplot as plt
 from collections import Counter, defaultdict
 
-from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
+from ignite.engine import Events, Engine, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss
 
 import text8dataset
@@ -51,12 +55,46 @@ if __name__ == '__main__':
     emb_size = 128
     hidden_size = 128
     num_layers = 1
-    model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers)
-    optimizer = Adam(model.parameters())
-    loss = CrossEntropyLanguageModel()
-    scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
+    model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
+    optimizer = Adam(model.parameters(), lr=22e-3)
+    criterion = CrossEntropyLanguageModel()
+    lr_finder_baselr = 1e-3
+    lr_finder_maxlr = 1e1
+    lr_finder_steps = 100
+    lr_finder_scheduler = LambdaLR(optimizer, 
+            lambda e: lr_finder_baselr + e * ((lr_finder_maxlr - lr_finder_baselr) / lr_finder_steps))
 
-    trainer = create_supervised_trainer(model, optimizer, loss, device=device)
+    def update_model(trainer, batch):
+        model.train()
+        optimizer.zero_grad()
+        x, y = batch
+        x, y = x.to(device), y.to(device)
+        y_pred = model(x)
+        loss = criterion(y_pred, y)
+        loss.backward()
+        clip_grad_norm_(model.parameters(), 0.25)
+        optimizer.step()
+        return loss.item()
+
+    lr_finder = Engine(update_model)
+    lr_finder_tr_losses = []
+    @lr_finder.on(Events.ITERATION_COMPLETED)
+    def step_lr_finder_sched(lr_finder):
+        lr_finder_scheduler.step()
+        lr_finder_tr_losses.append(lr_finder.state.output)
+        if math.isnan(lr_finder.state.output):
+            lr_finder.fire_event(Events.COMPLETED)
+    @lr_finder.on(Events.COMPLETED)
+    def set_lr(lr_finder):
+        plt.plot(lr_finder_tr_losses)
+        plt.show()
+        sys.exit()
+
+    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+
+    scheduler = OneCycleLR(optimizer, max_lr=1e1, epochs=25, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
+    trainer = Engine(update_model)
+
     metrics = {
             'acc': Accuracy(
                 output_transform=lambda y_pred: (y_pred[0].view((-1, ds.vocab_size)), y_pred[1].view((-1,)))),
