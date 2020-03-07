@@ -112,7 +112,7 @@ class SimpleGRULanguageModel(nn.Module):
     "Input shape: (bs, seq len)"
     def forward(self, x):
         x = self.embedding(x)
-        x, (h_n, c_n) = self.rnn(x)
+        x, h_n = self.rnn(x)
         x = self.projection(F.relu(x))
         x = self.out_emb(x)
         return x
