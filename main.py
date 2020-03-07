@@ -44,7 +44,7 @@ if __name__ == '__main__':
     te_indices = indices[-te_ds_len:]
     tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
     bs = 1024
-    va_bs = bs * 4
+    va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
     te_dl = DataLoader(te_ds, batch_size=va_bs)
