@@ -20,6 +20,8 @@
 | 10000  | 20    | 128    | 128    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 18.83  | 18.78  | 4.2207  | 4.2289  | KN+ID    | relu   |
 | 10000  | 20    | 128    | 256    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 19.28  | 19.21  | 4.1871  | 4.2007  | KN+ID    | relu   |
 | 10000  | 20    | 128    | 512    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 19.93  | 19.68  | 4.1393  | 4.1678  | KN+ID    | relu   |
+| 10000  | 20    | 128    | 1024   | 3584| 22e-3 | 0.25  | Plat,P=2  | Adam      | 25     | 18.26  | 18.26  | 2.2719  | 4.2668  | KN+ID    | relu   |
+| 10000  | 20    | 128    | 1024   | 3584| 2e-2  | 0.25  | 1c,.5,l   | Adam      | 25     | 20.60  | 20.11  | 4.0896  | 4.1421  | KN+ID    | relu   |
 
 ## Character Based
 | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
@@ -40,17 +42,21 @@
 | 100   | 16     | 256    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 58.46  | 58.43  | 1.3445  | 1.3457  | KN+ID    | relu   |
 | 100   | 16     | 512    | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 61.51  | 61.42  | 1.2286  | 1.2323  | KN+ID    | relu   |
 | 100   | 16     | 1024   | 128 | 1e-3  | 1.0   | Plat,P=2  | Adam      | 25     | 63.92  | 63.71  | 1.1448  | 1.1536  | KN+ID    | relu   |
+| 100   | 16     | 1024   | 7168| 5e-3  | 1.0   | 1c,.5,l   | Adam      | 25     | 63.79  | 63.48  | 1.1585  | 1.1697  | KN+ID    | relu   |
+| 100   | 16     | 1024   | 7168| 5e-3  | 1.0   | 1c,.5,l   | Adam      | 50     | 64.75  | 64.33  | 1.1264  | 1.1422  | KN+ID    | relu   |
 
 
 # Multi Layer RNN
 
 ## Word Based
-| N L | V Size | S Len | Emb Size | Hidd Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
-| --- | ------ | ----- | -------- | --------- | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
+| N L | V Size | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin | Gap |
+| --- | ------ | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ | --- |
+| 2   | 10000  | 20    | 128    | 1024   | 3584| 5e-3  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.70  | 20.46  | 3.9278  | 4.1366  | KN+ID    | relu   | 20  |
+| 4   | 10000  | 20    | 128    | 1024   | 3072| 1e-2  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.17  | 20.65  | 3.9897  | 4.1186  | KN+ID    | relu   | 20  |
 
 ## Character Based
-| N L | S Len | Emb Size | Hidd Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
-| --- | ----- | -------- | --------- | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
+| N L | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
+| --- | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
 
 
 # Tied Embedding RNN
