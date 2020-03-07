@@ -3,11 +3,14 @@ from torch import nn
 import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
 from torch.optim import SGD, Adam
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.optim.lr_scheduler import ReduceLROnPlateau, LambdaLR, OneCycleLR
 from torch.utils.data import Dataset, Subset, DataLoader
 
+import sys
+import math
 import random
 import datetime
+import matplotlib.pyplot as plt
 from collections import Counter, defaultdict
 
 from ignite.engine import Events, Engine, create_supervised_trainer, create_supervised_evaluator
@@ -56,7 +59,11 @@ if __name__ == '__main__':
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=22e-3)
     criterion = CrossEntropyLanguageModel()
-    scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
+    lr_finder_baselr = 1e-3
+    lr_finder_maxlr = 1e1
+    lr_finder_steps = 100
+    lr_finder_scheduler = LambdaLR(optimizer,
+            lambda e: lr_finder_baselr + e * ((lr_finder_maxlr - lr_finder_baselr) / lr_finder_steps))
 
     def update_model(trainer, batch):
         model.train()
@@ -70,6 +77,23 @@ if __name__ == '__main__':
         optimizer.step()
         return loss.item()
 
+    lr_finder = Engine(update_model)
+    lr_finder_tr_losses = []
+    @lr_finder.on(Events.ITERATION_COMPLETED)
+    def step_lr_finder_sched(lr_finder):
+        lr_finder_scheduler.step()
+        lr_finder_tr_losses.append(lr_finder.state.output)
+        if math.isnan(lr_finder.state.output):
+            lr_finder.fire_event(Events.COMPLETED)
+    @lr_finder.on(Events.COMPLETED)
+    def set_lr(lr_finder):
+        plt.plot(lr_finder_tr_losses)
+        plt.show()
+        sys.exit()
+
+    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+
+    scheduler = OneCycleLR(optimizer, max_lr=1e1, epochs=25, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     trainer = Engine(update_model)
     metrics = {
             'acc': Accuracy(
@@ -77,18 +101,19 @@ if __name__ == '__main__':
             'ce': Loss(criterion)}
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
+    @trainer.on(Events.ITERATION_COMPLETED)
+    def scheduler_step(trainer):
+        scheduler.step()
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
-
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
         scheduler.step(metrics['ce'])
-
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
         evaluator.run(tr_dl)
