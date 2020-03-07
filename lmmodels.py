@@ -18,12 +18,14 @@ class SimpleRNNLanguageModel(nn.Module):
                 batch_first=True)
         self.final = nn.Linear(hidden_size, vocab_size, bias=False)
         # do initalization
+        """
         for name, param in self.rnn.named_parameters():
             if name.startswith('weight_hh'):
                 nn.init.eye_(param)
             if name.startswith('weight_ih'):
                 nn.init.kaiming_normal_(param)
         nn.init.kaiming_normal_(self.final.weight)
+        """
         self.rnn.flatten_parameters()
 
     "Input shape: (bs, seq len)"
@@ -41,5 +43,3 @@ class RNNSharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
     def __init__(self, vocab_size, hidden_size, num_layers):
         super(RNNSharedEmbeddingLanguageModel, self).__init__(vocab_size, hidden_size, hidden_size, num_layers)
         self.final.weight = self.embedding.weight
-
-
