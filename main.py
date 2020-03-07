@@ -10,6 +10,7 @@ import sys
 import math
 import random
 import datetime
+import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter, defaultdict
 
@@ -32,7 +33,7 @@ class CrossEntropyLanguageModel(nn.Module):
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    ds = text8dataset.Text8WordDataSet('./text8', seq_len=20, max_vocab_size=10000)
+    ds = text8dataset.Text8WordDataSet(sys.argv[1], seq_len=20, max_vocab_size=10000)
     ds_len = len(ds)
     print(ds_len, ds.vocab_size)
     indices = list(range(ds_len))
@@ -59,11 +60,12 @@ if __name__ == '__main__':
     model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=22e-3)
     criterion = CrossEntropyLanguageModel()
-    lr_finder_baselr = 1e-3
-    lr_finder_maxlr = 1e1
+    lr_finder_baselr = 1e-4
+    lr_finder_maxlr = 5e0
     lr_finder_steps = 100
+    lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
     lr_finder_scheduler = LambdaLR(optimizer,
-            lambda e: lr_finder_baselr + e * ((lr_finder_maxlr - lr_finder_baselr) / lr_finder_steps))
+            lambda e: lr_finder_baselr * (lr_finder_gamma ** e))
 
     def update_model(trainer, batch):
         model.train()
@@ -87,13 +89,14 @@ if __name__ == '__main__':
             lr_finder.fire_event(Events.COMPLETED)
     @lr_finder.on(Events.COMPLETED)
     def set_lr(lr_finder):
-        plt.plot(lr_finder_tr_losses)
+        plt.plot(np.minimum(lr_finder_tr_losses, 10))
         plt.show()
         sys.exit()
 
-    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+    # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
-    scheduler = OneCycleLR(optimizer, max_lr=1e1, epochs=25, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
+    epochs = 25
+    scheduler = OneCycleLR(optimizer, max_lr=2e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     trainer = Engine(update_model)
     metrics = {
             'acc': Accuracy(
@@ -113,11 +116,11 @@ if __name__ == '__main__':
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
-        scheduler.step(metrics['ce'])
+        # scheduler.step(metrics['ce'])
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
         evaluator.run(tr_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
 
-    trainer.run(tr_dl, max_epochs=25)
+    trainer.run(tr_dl, max_epochs=epochs)
