@@ -24,6 +24,7 @@ class SimpleRNNLanguageModel(nn.Module):
             if name.startswith('weight_ih'):
                 nn.init.kaiming_normal_(param)
         nn.init.kaiming_normal_(self.final.weight)
+        self.rnn.flatten_parameters()
 
     "Input shape: (bs, seq len)"
     def forward(self, x):
