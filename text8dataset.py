@@ -54,8 +54,8 @@ class Text8WordDataSet(Dataset):
         self.gap = gap
 
     def __getitem__(self, idx):
-        x = self.text[idx * self.gap: idx * gap + self.seq_len]
-        y = self.text[idx * self.gap + 1: idx * gap + self.seq_len + 1]
+        x = self.text[idx * self.gap: idx * self.gap + self.seq_len]
+        y = self.text[idx * self.gap + 1: idx * self.gap + self.seq_len + 1]
         return x.to(torch.long), y.to(torch.long)
 
     def __len__(self):

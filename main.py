@@ -33,17 +33,19 @@ class CrossEntropyLanguageModel(nn.Module):
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    vocab_size = 10000
+    seq_len = 20
     with open(sys.argv[1]) as f:
-        full_text = f.read()
-    tr_text_len = int(0.95 * len(full_text))
-    va_text_len = int(0.04 * len(full_text))
-    te_text_len = int(0.01 * len(full_text))
-    tr_ds = text8dataset.Text8WordDataSet(text[:tr_text_len], seq_len=20, max_vocab_size=10000)
-    va_ds = text8dataset.Text8WordDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=20, vocab=tr_ds.vocab)
-    te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=20, vocab=tr_ds.vocab)
+        text = f.read()
+    tr_text_len = int(0.95 * len(text))
+    va_text_len = int(0.04 * len(text))
+    te_text_len = int(0.01 * len(text))
+    tr_ds = text8dataset.Text8WordDataSet(text[:tr_text_len], seq_len=seq_len, max_vocab_size=vocab_size)
+    va_ds = text8dataset.Text8WordDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=seq_len, vocab=tr_ds.vocab)
+    te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, vocab=tr_ds.vocab)
     ds_len = len(tr_ds)
-    print(ds_len, ds.vocab_size)
-    bs = 3584
+    print(ds_len, seq_len, vocab_size)
+    bs = 128
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
@@ -53,7 +55,7 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 128
     num_layers = 1
-    model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
+    model = lmmodels.SimpleRNNLanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=22e-3)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
@@ -89,7 +91,7 @@ if __name__ == '__main__':
         plt.show()
         sys.exit()
 
-    # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
     epochs = 25
     scheduler = OneCycleLR(optimizer, max_lr=2e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
