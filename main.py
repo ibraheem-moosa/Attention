@@ -129,8 +129,11 @@ if __name__ == '__main__':
         scheduler.step(metrics['ce'])
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
+        va_ce = evaluator.state.metrics['ce']
         evaluator.run(tr_dl)
         metrics = evaluator.state.metrics
-        print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
+        tr_ce = metrics['ce']
+        generalization_error = va_ce - tr_ce
+        print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f} Ge Error: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce'], generalization_error))
 
     trainer.run(tr_dl, max_epochs=epochs)
