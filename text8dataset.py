@@ -18,7 +18,7 @@ class Text8CharDataSet(Dataset):
         text = [self.char_to_index[c] for c in text]
         text = torch.tensor(text, dtype=torch.uint8)
         self.text = text
-        self.length = (text.shape[0] - seq_len) // gap + 1
+        self.length = (text.shape[0] - seq_len - 1) // gap + 1
         self.gap = gap
 
     def __getitem__(self, idx):
@@ -51,7 +51,7 @@ class Text8WordDataSet(Dataset):
         text = [word_to_index[w] for w in text]
         text = torch.tensor(text, dtype=torch.uint8)
         self.text = text
-        self.length = (text.shape[0] - seq_len) // gap + 1
+        self.length = (text.shape[0] - seq_len - 1) // gap + 1
         self.gap = gap
 
     def __getitem__(self, idx):
