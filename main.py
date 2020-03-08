@@ -60,8 +60,8 @@ if __name__ == '__main__':
     model = lmmodels.RNNSharedEmbeddingLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
-    lr_finder_baselr = 1e-2
-    lr_finder_maxlr = 1e0
+    lr_finder_baselr = 1e-4
+    lr_finder_maxlr = 1e1
     lr_finder_steps = 100
     lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
     lr_finder_scheduler = LambdaLR(optimizer,
@@ -80,28 +80,35 @@ if __name__ == '__main__':
         return loss.item()
 
     lr_finder = Engine(update_model)
-    lr_finder_tr_losses = []
-    @lr_finder.on(Events.ITERATION_COMPLETED)
-    def step_lr_finder_sched(lr_finder):
-        lr_finder_scheduler.step()
-        lr_finder_tr_losses.append(lr_finder.state.output)
-        if math.isnan(lr_finder.state.output):
-            lr_finder.fire_event(Events.COMPLETED)
-    @lr_finder.on(Events.COMPLETED)
-    def set_lr(lr_finder):
-        plt.plot(np.minimum(lr_finder_tr_losses, 9.3))
-        plt.show()
-        sys.exit()
-
-    # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
-
-    epochs = 25
-    scheduler = OneCycleLR(optimizer, max_lr=0.1, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear', div_factor=100)
-    trainer = Engine(update_model)
     metrics = {
             'acc': Accuracy(
                 output_transform=lambda y_pred: (y_pred[0].view((-1, ds.vocab_size)), y_pred[1].view((-1,)))),
             'ce': Loss(criterion)}
+    lr_finder_evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
+    lr_finder_va_ce = []
+    lr_finder_va_acc = []
+    @lr_finder.on(Events.ITERATION_COMPLETED)
+    def step_lr_finder_sched(lr_finder):
+        lr_finder_scheduler.step()
+        evaluator.run(va_dl)
+        metrics = evaluator.state.metrics
+        lr_finder_va_ce.append(metrics['ce'])
+        lr_finder_va_acc.append(metrics['acc'])
+        if math.isnan(metrics['ce']) or math.isnan(lr_finder.state.output):
+            lr_finder.fire_event(Events.COMPLETED)
+    @lr_finder.on(Events.COMPLETED)
+    def set_lr(lr_finder):
+        plt.plot(np.minimum(lr_finder_va_ce, 9.3))
+        plt.show()
+        plt.plot(np.maximum(lr_finder_va_acc, 0))
+        plt.show()
+        sys.exit()
+
+    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+
+    epochs = 25
+    scheduler = OneCycleLR(optimizer, max_lr=0.1, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear', div_factor=100)
+    trainer = Engine(update_model)
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
     @trainer.on(Events.ITERATION_COMPLETED)
