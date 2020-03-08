@@ -92,7 +92,7 @@ if __name__ == '__main__':
         metrics = lr_finder_evaluator.state.metrics
         lr_finder_va_ce.append(metrics['ce'])
         lr_finder_va_acc.append(metrics['acc'])
-        if math.isnan(metrics['ce']) or math.isnan(lr_finder.state.output):
+        if metrics['ce'] > 100 or math.isnan(metrics['ce']) or math.isnan(lr_finder.state.output):
             lr_finder.fire_event(Events.COMPLETED)
         print(datetime.datetime.now())
         print(lr_finder_va_ce[-1])
