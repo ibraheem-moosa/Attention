@@ -80,7 +80,7 @@ if __name__ == '__main__':
     lr_finder = Engine(update_model)
     metrics = {
             'acc': Accuracy(
-                output_transform=lambda y_pred: (y_pred[0].view((-1, ds.vocab_size)), y_pred[1].view((-1,)))),
+                output_transform=lambda y_pred: (y_pred[0].view((-1, vocab_size)), y_pred[1].view((-1,)))),
             'ce': Loss(criterion)}
     lr_finder_evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
     lr_finder_va_ce = []
