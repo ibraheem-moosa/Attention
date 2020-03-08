@@ -60,8 +60,8 @@ if __name__ == '__main__':
     model = lmmodels.RNNSharedEmbeddingLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
-    lr_finder_baselr = 1e-5
-    lr_finder_maxlr = 1e-1
+    lr_finder_baselr = 1e-3
+    lr_finder_maxlr = 1e1
     lr_finder_steps = 100
     lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
     lr_finder_scheduler = LambdaLR(optimizer,
