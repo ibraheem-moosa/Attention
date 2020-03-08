@@ -14,9 +14,9 @@ class SimpleRNNLanguageModel(nn.Module):
                 hidden_size=hidden_size,
                 num_layers=num_layers,
                 nonlinearity='relu',
-                bias=True,
+                bias=False,
                 batch_first=True)
-        self.projection = nn.Linear(hidden_size, emb_size, bias=True)
+        self.projection = nn.Linear(hidden_size, emb_size, bias=False)
         self.out_emb = nn.Linear(emb_size, vocab_size, bias=False)
         # do initalization
         for name, param in self.rnn.named_parameters():
