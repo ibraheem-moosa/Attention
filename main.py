@@ -54,7 +54,7 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=va_bs)
     print(len(tr_dl))
 
-    hidden_size = 1024
+    hidden_size = 128
     emb_size = 128
     num_layers = 1
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
