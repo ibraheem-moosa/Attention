@@ -18,7 +18,6 @@ class SimpleRNNLanguageModel(nn.Module):
                 batch_first=True)
         self.projection = nn.Linear(hidden_size, emb_size, bias=False)
         self.out_emb = nn.Linear(emb_size, vocab_size, bias=False)
-        """
         # do initalization
         for name, param in self.rnn.named_parameters():
             if name.startswith('weight_hh'):
@@ -27,7 +26,6 @@ class SimpleRNNLanguageModel(nn.Module):
                 nn.init.kaiming_normal_(param)
         nn.init.kaiming_normal_(self.projection.weight)
         nn.init.kaiming_normal_(self.out_emb.weight)
-        """
 
     "Input shape: (bs, seq len)"
     def forward(self, x):
