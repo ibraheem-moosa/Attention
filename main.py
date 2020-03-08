@@ -54,9 +54,9 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=va_bs)
     print(len(tr_dl))
 
-    hidden_size = 128
+    hidden_size = 256
     emb_size = 128
-    num_layers = 2
+    num_layers = 1
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e2)
     criterion = CrossEntropyLanguageModel()
