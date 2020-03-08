@@ -107,13 +107,16 @@ if __name__ == '__main__':
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
     epochs = 25
-    scheduler = OneCycleLR(optimizer, max_lr=1e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
+    # scheduler = OneCycleLR(optimizer, max_lr=1e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
+    scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
     trainer = Engine(update_model)
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
+    """
     @trainer.on(Events.ITERATION_COMPLETED)
     def scheduler_step(trainer):
         scheduler.step()
+    """
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
@@ -123,7 +126,7 @@ if __name__ == '__main__':
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
-        # scheduler.step(metrics['ce'])
+        scheduler.step(metrics['ce'])
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
         evaluator.run(tr_dl)
