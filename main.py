@@ -94,6 +94,7 @@ if __name__ == '__main__':
         lr_finder_va_acc.append(metrics['acc'])
         if math.isnan(metrics['ce']) or math.isnan(lr_finder.state.output):
             lr_finder.fire_event(Events.COMPLETED)
+        print(lr_finder_va_ce[-1])
     @lr_finder.on(Events.COMPLETED)
     def set_lr(lr_finder):
         plt.plot(np.minimum(lr_finder_va_ce, 9.3))
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
-    @trainer.on(Events.EPOCH_COMPLETED)
+    @trainer.on(Events.ITERATION_COMPLETED(every=256))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
