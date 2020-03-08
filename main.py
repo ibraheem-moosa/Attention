@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     hidden_size = 1024
     emb_size = 128
-    num_layers = 4
+    num_layers = 1
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
