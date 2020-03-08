@@ -49,10 +49,10 @@
 # Multi Layer RNN
 
 ## Word Based
-| N L | V Size | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin | Gap |
-| --- | ------ | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ | --- |
-| 2   | 10000  | 20    | 128    | 1024   | 3584| 5e-3  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.70  | 20.46  | 3.9278  | 4.1366  | KN+ID    | relu   | 20  |
-| 4   | 10000  | 20    | 128    | 1024   | 3072| 1e-2  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.17  | 20.65  | 3.9897  | 4.1186  | KN+ID    | relu   | 20  |
+| N L | V Size | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
+| --- | ------ | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
+| 2   | 10000  | 20    | 128    | 1024   | 3584| 5e-3  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.70  | 20.46  | 3.9278  | 4.1366  | KN+ID    | relu   |
+| 4   | 10000  | 20    | 128    | 1024   | 3072| 1e-2  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.17  | 20.65  | 3.9897  | 4.1186  | KN+ID    | relu   |
 
 ## Character Based
 | N L | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
@@ -62,10 +62,25 @@
 # Tied Embedding RNN
 
 ## Word Based
-| N L | V Size | S Len | Emb Size | Hidd Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
-| --- | ------ | ----- | -------- | --------- | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
+| N L | V Size | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
+| --- | ------ | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
+| 4   | 10000  | 20    | 128    | 1024   | 3072| 1e-3  | 0.25  | 1c,.5,l   | Adam      | 25     | 22.23  | 19.94  | 4.0353  | 4.1829  | KN+ID    | relu   |
 
 ## Character Based
 | N L | S Len | Emb Size | Hidd Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Init     | NonLin |
 | --- | ----- | -------- | --------- | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | ------ |
 
+
+
+# Multi Layer GRU
+## Word Based
+| N L | V Size | S Len | E Size | H Size | BS  | LR    | Gr Cl | Scheduler | Optimizer | Epochs | Tr Acc | Va Acc | Tr CE   | Va CE   | Ge Error |  Init    |
+| --- | ------ | ----- | ------ | ------ | --- | ----- | ----- | --------- | --------- | ------ | ------ | ------ | ------- | ------- | -------- | -------- |
+| 1   | 10000  | 20    | 128    | 128    | 2048| 1e0   | 1.0   | Plat,P=2  | Adam      | 25     | 16.66  | 16.68  | 4.4124  | 4.4133  | 9e-4     | -        |
+| 1   | 10000  | 20    | 128    | 128    | 2048| 1e1   | 1.0   | Plat,P=2  | Adam      | 25     | 18.69  | 18.66  | 4.2338  | 4.2407  | 7e-3     | -        |
+| 1   | 10000  | 20    | 128    | 128    | 2048| 1e2   | 1.0   | Plat,P=2  | Adam      | 25     | 19.08  | 18.99  | 4.2063  | 4.2164  | 1e-2     | -        |
+| 2   | 10000  | 20    | 128    | 128    | 2048| 1e2   | 1.0   | Plat,P=2  | Adam      | 25     | 19.53  | 19.37  | 4.1904  | 4.2042  | 1.38e-2  | -        |
+| 1   | 10000  | 20    | 256    | 128    | 2048| 1e2   | 1.0   | Plat,P=2  | Adam      | 25     | 19.61  | 19.44  | 4.1678  | 4.1853  | 1.75e-2  | -        |
+| 2   | 10000  | 20    | 256    | 128    | 2048| 1e2   | 1.0   | Plat,P=2  | Adam      | 25     | 18.27  | 18.21  | 4.2877  | 4.2948  | 7e-3     | -        |
+| 1   | 10000  | 20    | 512    | 128    | 2048| 1e2   | 1.0   | Plat,P=2  | Adam      | 25     | 20.25  | 19.84  | 4.1211  | 4.1588  | 3.77e-2  | -        |
+| 2   | 10000  | 20    | 512    | 128    | 2048| 1e2   | 1.0   | Plat,P=2  | Adam      | 25     | 17.62  | 17.55  | 4.3487  | 4.3529  | 4e-3     | -        |
