@@ -61,7 +61,7 @@ if __name__ == '__main__':
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-5
-    lr_finder_maxlr = 1e1
+    lr_finder_maxlr = 1e0
     lr_finder_steps = 100
     lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
     lr_finder_scheduler = LambdaLR(optimizer,
@@ -89,7 +89,7 @@ if __name__ == '__main__':
             lr_finder.fire_event(Events.COMPLETED)
     @lr_finder.on(Events.COMPLETED)
     def set_lr(lr_finder):
-        plt.plot(np.minimum(lr_finder_tr_losses, 10))
+        plt.plot(np.minimum(lr_finder_tr_losses, 1000))
         plt.show()
         sys.exit()
 
