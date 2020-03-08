@@ -55,7 +55,7 @@ if __name__ == '__main__':
     print(len(tr_dl))
 
     hidden_size = 1024
-    emb_size = 128
+    emb_size = 256
     num_layers = 4
     model = lmmodels.RNNSharedEmbeddingLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         plt.show()
         sys.exit()
 
-    # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
     epochs = 25
     scheduler = OneCycleLR(optimizer, max_lr=1e-3, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
