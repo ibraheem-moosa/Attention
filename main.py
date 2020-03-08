@@ -94,6 +94,7 @@ if __name__ == '__main__':
         lr_finder_va_acc.append(metrics['acc'])
         if math.isnan(metrics['ce']) or math.isnan(lr_finder.state.output):
             lr_finder.fire_event(Events.COMPLETED)
+        print(datetime.datetime.now())
         print(lr_finder_va_ce[-1])
     @lr_finder.on(Events.COMPLETED)
     def set_lr(lr_finder):
