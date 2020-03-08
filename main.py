@@ -57,7 +57,7 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 16
     num_layers = 2
-    model = lmmodels.RNNSharedEmbeddingLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
+    model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-5
