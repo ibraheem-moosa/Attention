@@ -45,7 +45,7 @@ if __name__ == '__main__':
     te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, vocab=tr_ds.vocab)
     ds_len = len(tr_ds)
     print(ds_len, seq_len, vocab_size)
-    bs = 4092
+    bs = 3584
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
