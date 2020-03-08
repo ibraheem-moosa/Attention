@@ -107,7 +107,7 @@ if __name__ == '__main__':
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
     epochs = 25
-    scheduler = OneCycleLR(optimizer, max_lr=2.5, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear', div_factor=100)
+    scheduler = OneCycleLR(optimizer, max_lr=2.5, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='cos', div_factor=100)
     trainer = Engine(update_model)
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
