@@ -5,12 +5,9 @@ from collections import Counter, defaultdict
 
 
 class Text8CharDataSet(Dataset):
-    def __init__(self, path, seq_len, gap=None):
+    def __init__(self, path, seq_len):
         super(Text8CharDataSet, self).__init__()
         self.seq_len = seq_len
-        if gap is None:
-            gap = seq_len
-        self.gap = gap
         with open(path) as f:
             text = f.read()
         chars = sorted(list(set(text)))
@@ -23,23 +20,20 @@ class Text8CharDataSet(Dataset):
         text = [self.char_to_index[c] for c in text]
         text = torch.tensor(text, dtype=torch.uint8)
         self.text = text
-        self.length = (text.shape[0] - seq_len - 1) // gap # reserve one character at end
+        self.length = (text.shape[0] - 1) // seq_len # reserve one character at end
 
     def __getitem__(self, idx):
-        x = self.text[idx * self.gap: idx * self.gap + self.seq_len]
-        y = self.text[idx * self.gap + 1: idx * self.gap + self.seq_len + 1]
+        x = self.text[idx * self.seq_len: (idx + 1) * self.seq_len]
+        y = self.text[idx * self.seq_len + 1: (idx + 1) * self.seq_len + 1]
         return x.to(torch.long), y.to(torch.long)
 
     def __len__(self):
         return self.length
 
 class Text8WordDataSet(Dataset):
-    def __init__(self, path, seq_len=10, gap=None, max_vocab_size=None):
+    def __init__(self, path, seq_len=10, max_vocab_size=None):
         super(Text8WordDataSet, self).__init__()
         self.seq_len = seq_len
-        if gap is None:
-            gap = seq_len
-        self.gap = gap
         with open(path) as f:
             text = f.read()
         text = text.split()
@@ -58,11 +52,11 @@ class Text8WordDataSet(Dataset):
         text = [self.word_to_index[w] for w in text]
         text = torch.tensor(text, dtype=torch.uint8)
         self.text = text
-        self.length = (text.shape[0] - seq_len - 1) // gap # reserve one word at end
+        self.length = (text.shape[0] - 1) // seq_len # reserve one character at end
 
     def __getitem__(self, idx):
-        x = self.text[idx * self.gap: idx * self.gap + self.seq_len]
-        y = self.text[idx * self.gap + 1: idx * self.gap + self.seq_len + 1]
+        x = self.text[idx * self.seq_len: (idx + 1) * self.seq_len]
+        y = self.text[idx * self.seq_len + 1: (idx + 1) * self.seq_len + 1]
         return x.to(torch.long), y.to(torch.long)
 
     def __len__(self):
