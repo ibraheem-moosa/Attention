@@ -33,20 +33,16 @@ class CrossEntropyLanguageModel(nn.Module):
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    ds = text8dataset.Text8WordDataSet(sys.argv[1], seq_len=20, max_vocab_size=10000)
-    ds_len = len(ds)
+    with open(sys.argv[1]) as f:
+        full_text = f.read()
+    tr_text_len = int(0.95 * len(full_text))
+    va_text_len = int(0.04 * len(full_text))
+    te_text_len = int(0.01 * len(full_text))
+    tr_ds = text8dataset.Text8WordDataSet(text[:tr_text_len], seq_len=20, max_vocab_size=10000)
+    va_ds = text8dataset.Text8WordDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=20, vocab=tr_ds.vocab)
+    te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=20, vocab=tr_ds.vocab)
+    ds_len = len(tr_ds)
     print(ds_len, ds.vocab_size)
-    indices = list(range(ds_len))
-    random.seed(42)
-    random.shuffle(indices)
-    te_ratio = 0.01
-    te_ds_len = int(ds_len * te_ratio)
-    va_ratio = 0.04
-    va_ds_len = int(ds_len * va_ratio)
-    tr_indices = indices[:-va_ds_len-te_ds_len]
-    va_indices = indices[-va_ds_len-te_ds_len:-te_ds_len]
-    te_indices = indices[-te_ds_len:]
-    tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
     bs = 3584
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
