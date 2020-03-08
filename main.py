@@ -59,8 +59,8 @@ if __name__ == '__main__':
     optimizer = Adam(model.parameters(), lr=1e2)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
-    lr_finder_maxlr = 1e0
-    lr_finder_steps = 10
+    lr_finder_maxlr = 1e-1
+    lr_finder_steps = 20
     lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
     lr_finder_scheduler = LambdaLR(optimizer,
             lambda e: lr_finder_baselr * (lr_finder_gamma ** e))
