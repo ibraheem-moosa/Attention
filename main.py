@@ -100,7 +100,7 @@ if __name__ == '__main__':
     def set_lr(lr_finder):
         plt.plot(np.minimum(lr_finder_va_ce, 9.3))
         plt.show()
-        plt.plot(np.maximum(lr_finder_va_acc, 0))
+        plt.plot(lr_finder_va_acc)
         plt.show()
         sys.exit()
 
