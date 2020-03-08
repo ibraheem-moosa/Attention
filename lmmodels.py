@@ -14,7 +14,7 @@ class SimpleRNNLanguageModel(nn.Module):
                 hidden_size=hidden_size,
                 num_layers=num_layers,
                 nonlinearity='relu',
-                bias=False,
+                bias=True,
                 batch_first=True)
         self.projection = nn.Linear(hidden_size, emb_size, bias=True)
         self.out_emb = nn.Linear(emb_size, vocab_size, bias=False)
