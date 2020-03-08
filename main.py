@@ -90,8 +90,8 @@ if __name__ == '__main__':
     @lr_finder.on(Events.ITERATION_COMPLETED)
     def step_lr_finder_sched(lr_finder):
         lr_finder_scheduler.step()
-        evaluator.run(va_dl)
-        metrics = evaluator.state.metrics
+        lr_finder_evaluator.run(va_dl)
+        metrics = lr_finder_evaluator.state.metrics
         lr_finder_va_ce.append(metrics['ce'])
         lr_finder_va_acc.append(metrics['acc'])
         if math.isnan(metrics['ce']) or math.isnan(lr_finder.state.output):
