@@ -54,7 +54,7 @@ if __name__ == '__main__':
     te_dl = DataLoader(te_ds, batch_size=va_bs)
     print(len(tr_dl))
 
-    hidden_size = 1024
+    hidden_size = 512
     emb_size = 128
     num_layers = 1
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
-    epochs = 25
+    epochs = 100
     # scheduler = OneCycleLR(optimizer, max_lr=1e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
     trainer = Engine(update_model)
