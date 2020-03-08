@@ -89,7 +89,7 @@ if __name__ == '__main__':
             lr_finder.fire_event(Events.COMPLETED)
     @lr_finder.on(Events.COMPLETED)
     def set_lr(lr_finder):
-        plt.plot(np.minimum(lr_finder_tr_losses, 50))
+        plt.plot(np.minimum(lr_finder_tr_losses, 10))
         plt.show()
         sys.exit()
 
