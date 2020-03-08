@@ -33,20 +33,18 @@ class CrossEntropyLanguageModel(nn.Module):
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    ds = text8dataset.Text8WordDataSet(sys.argv[1], seq_len=20, max_vocab_size=10000)
-    ds_len = len(ds)
-    print(ds_len, ds.vocab_size)
-    indices = list(range(ds_len))
-    random.seed(42)
-    random.shuffle(indices)
-    te_ratio = 0.01
-    te_ds_len = int(ds_len * te_ratio)
-    va_ratio = 0.04
-    va_ds_len = int(ds_len * va_ratio)
-    tr_indices = indices[:-va_ds_len-te_ds_len]
-    va_indices = indices[-va_ds_len-te_ds_len:-te_ds_len]
-    te_indices = indices[-te_ds_len:]
-    tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
+    vocab_size = 10000
+    seq_len = 20
+    with open(sys.argv[1]) as f:
+        text = f.read()
+    tr_text_len = int(0.95 * len(text))
+    va_text_len = int(0.04 * len(text))
+    te_text_len = int(0.01 * len(text))
+    tr_ds = text8dataset.Text8WordDataSet(text[:tr_text_len], seq_len=seq_len, max_vocab_size=vocab_size)
+    va_ds = text8dataset.Text8WordDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=seq_len, vocab=tr_ds.vocab)
+    te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, vocab=tr_ds.vocab)
+    ds_len = len(tr_ds)
+    print(ds_len, seq_len, vocab_size)
     bs = 2048
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
@@ -61,7 +59,7 @@ if __name__ == '__main__':
     optimizer = Adam(model.parameters(), lr=1e2)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
-    lr_finder_maxlr = 1e0
+    lr_finder_maxlr = 1e3
     lr_finder_steps = 100
     lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
     lr_finder_scheduler = LambdaLR(optimizer,
@@ -104,9 +102,9 @@ if __name__ == '__main__':
         plt.show()
         sys.exit()
 
-    # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
-    epochs = 100
+    epochs = 5
     # scheduler = OneCycleLR(optimizer, max_lr=1e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
     trainer = Engine(update_model)
@@ -126,7 +124,7 @@ if __name__ == '__main__':
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
-        scheduler.step(metrics['ce'])
+        # scheduler.step(metrics['ce'])
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
         va_ce = evaluator.state.metrics['ce']
