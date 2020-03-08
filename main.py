@@ -55,12 +55,12 @@ if __name__ == '__main__':
     print(len(tr_dl))
 
     hidden_size = 1024
-    emb_size = 256
+    emb_size = 128
     num_layers = 4
     model = lmmodels.RNNSharedEmbeddingLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
-    lr_finder_baselr = 1e-3
+    lr_finder_baselr = 1e-4
     lr_finder_maxlr = 1e1
     lr_finder_steps = 100
     lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
             lr_finder.fire_event(Events.COMPLETED)
     @lr_finder.on(Events.COMPLETED)
     def set_lr(lr_finder):
-        plt.plot(np.minimum(lr_finder_tr_losses, 10))
+        plt.plot(np.minimum(lr_finder_tr_losses, 50))
         plt.show()
         sys.exit()
 
