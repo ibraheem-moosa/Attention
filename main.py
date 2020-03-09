@@ -56,7 +56,7 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 128
     num_layers = 2
-    model = lmmodels.SimpleGRULanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
+    model = lmmodels.GRUSharedEmbeddingLanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1.0e1)
     try:
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
