@@ -56,7 +56,7 @@ if __name__ == '__main__':
     emb_size = 128
     num_layers = 1
     model = lmmodels.SimpleGRULanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
-    optimizer = Adam(model.parameters(), lr=1e0)
+    optimizer = Adam(model.parameters(), lr=1.75e2)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
     lr_finder_maxlr = 1e-1
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
-    epochs = 10
+    epochs = 8
     # scheduler = OneCycleLR(optimizer, max_lr=1e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     # scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
     trainer = Engine(update_model)
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
-    @trainer.on(Events.ITERATION_COMPLETED(every=256))
+    @trainer.on(Events.ITERATION_COMPLETED(every=1024))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
