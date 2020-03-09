@@ -131,11 +131,15 @@ if __name__ == '__main__':
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
         # scheduler.step(metrics['ce'])
+    """
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
         evaluator.run(tr_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
+    """
+    @trainer.on(Events.COMPLETED)
+    def save_model_weight(trainer):
         torch.save(model.state_dict(), checkpoint_dir + '/model.pth')
         torch.save(model.state_dict(), checkpoint_dir + '/optimizer.pth')
 
