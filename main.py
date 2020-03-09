@@ -56,15 +56,9 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 128
     num_layers = 2
+    lr = 1.0e0
     model = lmmodels.GRUSharedEmbeddingLanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
-    optimizer = Adam(model.parameters(), lr=1.0e0)
-    try:
-        model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
-        optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
-    except:
-        pass
-    for param_group in optimizer.param_groups():
-        param_groups['lr'] = 1e0
+    optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
     lr_finder_maxlr = 1e-1
@@ -125,6 +119,15 @@ if __name__ == '__main__':
     def scheduler_step(trainer):
         scheduler.step()
     """
+    @trainer.on(Events.STARTED)
+    def load_model_weights(trainer):
+        model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
+        optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
+    @trainer.on(Events.STARTED)
+    def reset_lr(trainer):
+        for param_group in optimizer.param_groups():
+            param_groups['lr'] = lr
+
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
