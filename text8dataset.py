@@ -43,6 +43,8 @@ class Text8WordDataSet(Dataset):
             words = sorted(list(map(lambda t:t[0], word_counter.most_common(max_vocab_size))))
             total_tokens = sum(word_counter.values())
             known_tokens = sum([v for k, v in word_counter.most_common(max_vocab_size)])
+            print('Top 25 tokens: {}'.format(list(word_counter.most_common(max_vocab_size))[:25]))
+            print('Total tokens: {}'.format(total_tokens))
             print('Percentage of unknown tokens: {:.6f}'.format(1.0 - known_tokens / total_tokens))
             print('Last selected token occurance count: {}'.format(list(word_counter.most_common(max_vocab_size + 1))[-1]))
             self.vocab_size = len(words)
