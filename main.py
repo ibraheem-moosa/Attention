@@ -62,6 +62,8 @@ if __name__ == '__main__':
     if len(sys.argv) == 4:
         model.load_state_dict(torch.load(sys.argv[2]))
         optimizer.load_state_dict(torch.load(sys.argv[3]))
+    for param_group in optimizer.param_groups:
+        param_groups['lr'] = 1e0
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-5
     lr_finder_maxlr = 1e-1
