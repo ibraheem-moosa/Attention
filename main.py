@@ -32,6 +32,7 @@ class CrossEntropyLanguageModel(nn.Module):
         return self.ce(inp, targ)
 
 if __name__ == '__main__':
+    checkpoint_dir = sys.argv[2]
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     ds = text8dataset.Text8CharDataSet(sys.argv[1], seq_len=100)
     ds_len = len(ds)
@@ -60,8 +61,8 @@ if __name__ == '__main__':
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e1)
     if len(sys.argv) == 4:
-        model.load_state_dict(torch.load(sys.argv[2]))
-        optimizer.load_state_dict(torch.load(sys.argv[3]))
+        model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
+        optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
     for param_group in optimizer.param_groups:
         param_groups['lr'] = 1e0
     criterion = CrossEntropyLanguageModel()
@@ -130,5 +131,7 @@ if __name__ == '__main__':
         evaluator.run(tr_dl)
         metrics = evaluator.state.metrics
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
+        torch.save(model.state_dict(), checkpoint_dir + '/model.pth')
+        torch.save(model.state_dict(), checkpoint_dir + 'optimizer.pth')
 
     trainer.run(tr_dl, max_epochs=epochs)
