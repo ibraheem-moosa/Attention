@@ -42,8 +42,8 @@ if __name__ == '__main__':
     va_text_len = int(0.04 * len(text))
     te_text_len = int(0.01 * len(text))
     tr_ds = text8dataset.Text8WordDataSet(text[:tr_text_len], seq_len=seq_len, max_vocab_size=vocab_size)
-    va_ds = text8dataset.Text8WordDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=seq_len, vocab=tr_ds.vocab)
-    te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, vocab=tr_ds.vocab)
+    va_ds = text8dataset.Text8WordDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=seq_len, vocab=tr_ds.vocab, gap=seq_len)
+    te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, vocab=tr_ds.vocab, gap=seq_len)
     ds_len = len(tr_ds)
     print(ds_len, seq_len, vocab_size)
     bs = 128
