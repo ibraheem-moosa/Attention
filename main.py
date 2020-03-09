@@ -125,8 +125,8 @@ if __name__ == '__main__':
         optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
     @trainer.on(Events.STARTED)
     def reset_lr(trainer):
-        for param_group in optimizer.param_groups():
-            param_groups['lr'] = lr
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
 
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
