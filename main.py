@@ -47,7 +47,7 @@ if __name__ == '__main__':
     va_indices = indices[-va_ds_len-te_ds_len:-te_ds_len]
     te_indices = indices[-te_ds_len:]
     tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
-    bs = 4608
+    bs = 128
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 16
     num_layers = 2
-    model = lmmodels.SimpleRNNLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
+    model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-5
@@ -93,10 +93,10 @@ if __name__ == '__main__':
         plt.show()
         sys.exit()
 
-    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
+    # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
     epochs = 50
-    scheduler = OneCycleLR(optimizer, max_lr=5e-4, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
+    # scheduler = OneCycleLR(optimizer, max_lr=5e-4, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     trainer = Engine(update_model)
     metrics = {
             'acc': Accuracy(
@@ -104,14 +104,17 @@ if __name__ == '__main__':
             'ce': Loss(criterion)}
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
+    """
     @trainer.on(Events.ITERATION_COMPLETED)
     def scheduler_step(trainer):
         scheduler.step()
+    """
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
-    @trainer.on(Events.EPOCH_COMPLETED)
+    #@trainer.on(Events.EPOCH_COMPLETED)
+    @trainer.on(Events.ITERATION_COMPLETED(every=1024))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
