@@ -58,10 +58,9 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 16
     num_layers = 2
+    lr = 1e0
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
-    optimizer = Adam(model.parameters(), lr=1e1)
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = 1e0
+    optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-5
     lr_finder_maxlr = 1e-1
@@ -116,6 +115,11 @@ if __name__ == '__main__':
     def load_model_weights(trainer):
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
         optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
+    @trainer.on(Events.STARTED)
+    def reset_lr(trainer):
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
+
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
