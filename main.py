@@ -135,5 +135,7 @@ if __name__ == '__main__':
         tr_ce = metrics['ce']
         generalization_error = va_ce - tr_ce
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f} Ge Error: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce'], generalization_error))
+        torch.save(model.state_dict(), 'model.pth')
+        torch.save(optimizer.state_dict(), 'optimizer.pth')
 
     trainer.run(tr_dl, max_epochs=epochs)
