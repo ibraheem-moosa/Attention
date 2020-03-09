@@ -113,7 +113,7 @@ if __name__ == '__main__':
         scheduler.step()
     """
     @trainer.on(Events.STARTED)
-    def load_model_weights:
+    def load_model_weights(trainer):
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
         optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
