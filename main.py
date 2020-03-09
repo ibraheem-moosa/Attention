@@ -32,6 +32,7 @@ class CrossEntropyLanguageModel(nn.Module):
         return self.ce(inp, targ)
 
 if __name__ == '__main__':
+    checkpoint_dir = sys.argv[2]
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     vocab_size = 10000
     seq_len = 20
@@ -45,18 +46,23 @@ if __name__ == '__main__':
     te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, vocab=tr_ds.vocab)
     ds_len = len(tr_ds)
     print(ds_len, seq_len, vocab_size)
-    bs = 3584
+    bs = 128
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
     te_dl = DataLoader(te_ds, batch_size=va_bs)
     print(len(tr_dl))
 
-    hidden_size = 512
+    hidden_size = 1024
     emb_size = 128
-    num_layers = 1
+    num_layers = 2
     model = lmmodels.SimpleGRULanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1.0e1)
+    try:
+        model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
+        optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
+    except:
+        pass
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
     lr_finder_maxlr = 1e-1
@@ -106,7 +112,7 @@ if __name__ == '__main__':
 
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
-    epochs = 8
+    epochs = 1
     # scheduler = OneCycleLR(optimizer, max_lr=1e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     # scheduler = ReduceLROnPlateau(optimizer, patience=2, verbose=True)
     trainer = Engine(update_model)
@@ -135,7 +141,7 @@ if __name__ == '__main__':
         tr_ce = metrics['ce']
         generalization_error = va_ce - tr_ce
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f} Ge Error: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce'], generalization_error))
-        torch.save(model.state_dict(), 'model.pth')
-        torch.save(optimizer.state_dict(), 'optimizer.pth')
+        torch.save(model.state_dict(), checkpoint_dir + '/model.pth')
+        torch.save(optimizer.state_dict(), checkpoint_dir + '/optimizer.pth')
 
     trainer.run(tr_dl, max_epochs=epochs)
