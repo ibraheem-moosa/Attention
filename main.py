@@ -132,6 +132,6 @@ if __name__ == '__main__':
         metrics = evaluator.state.metrics
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
         torch.save(model.state_dict(), checkpoint_dir + '/model.pth')
-        torch.save(model.state_dict(), checkpoint_dir + 'optimizer.pth')
+        torch.save(model.state_dict(), checkpoint_dir + '/optimizer.pth')
 
     trainer.run(tr_dl, max_epochs=epochs)
