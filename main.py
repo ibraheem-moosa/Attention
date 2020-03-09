@@ -57,12 +57,14 @@ if __name__ == '__main__':
     emb_size = 128
     num_layers = 2
     model = lmmodels.GRUSharedEmbeddingLanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
-    optimizer = Adam(model.parameters(), lr=1.0e1)
+    optimizer = Adam(model.parameters(), lr=1.0e0)
     try:
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
         optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
     except:
         pass
+    for param_group in optimizer.param_groups():
+        param_groups['lr'] = 1e0
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
     lr_finder_maxlr = 1e-1
