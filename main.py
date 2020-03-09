@@ -60,9 +60,6 @@ if __name__ == '__main__':
     num_layers = 2
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=1e1)
-    if len(sys.argv) == 4:
-        model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
-        optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
     for param_group in optimizer.param_groups:
         param_group['lr'] = 1e0
     criterion = CrossEntropyLanguageModel()
@@ -115,6 +112,10 @@ if __name__ == '__main__':
     def scheduler_step(trainer):
         scheduler.step()
     """
+    @trainer.on(Events.STARTED)
+    def load_model_weights:
+        model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
+        optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
