@@ -56,7 +56,7 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 128
     num_layers = 2
-    lr = 1.0e0
+    lr = 1.0e-4
     model = lmmodels.GRUSharedEmbeddingLanguageModel(vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
@@ -138,6 +138,7 @@ if __name__ == '__main__':
         metrics = evaluator.state.metrics
         print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
         # scheduler.step(metrics['ce'])
+    """
     @trainer.on(Events.COMPLETED)
     def log_tr_loss(trainer):
         va_ce = evaluator.state.metrics['ce']
@@ -146,6 +147,9 @@ if __name__ == '__main__':
         tr_ce = metrics['ce']
         generalization_error = va_ce - tr_ce
         print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f} Ge Error: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce'], generalization_error))
+    """
+    @trainer.on(Events.COMPLETED)
+    def save_model_weight(trainer):
         torch.save(model.state_dict(), checkpoint_dir + '/model.pth')
         torch.save(optimizer.state_dict(), checkpoint_dir + '/optimizer.pth')
 
