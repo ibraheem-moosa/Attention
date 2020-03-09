@@ -63,7 +63,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 4:
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
         optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
-    for param_group in optimizer.param_groups:
+    for param_group in optimizer.param_groups():
         param_groups['lr'] = 1e0
     criterion = CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-5
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
-    epochs = 50
+    epochs = 1
     # scheduler = OneCycleLR(optimizer, max_lr=5e-4, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     trainer = Engine(update_model)
     metrics = {
