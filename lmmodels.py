@@ -180,7 +180,7 @@ class SimpleGRULanguageModel(nn.Module):
                 x = F.softmax(x)
                 x = x.cpu()
                 x = x / x.sum()
-                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x))
+                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
                 sentence.append(current_char)
         return sentence
 
