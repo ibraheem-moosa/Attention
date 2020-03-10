@@ -116,7 +116,7 @@ if __name__ == '__main__':
     @trainer.on(Events.STARTED)
     def load_model_weights(trainer):
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
-        # optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
+        optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
     @trainer.on(Events.STARTED)
     def reset_lr(trainer):
         for param_group in optimizer.param_groups:
