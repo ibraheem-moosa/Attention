@@ -53,7 +53,6 @@ class SimpleRNNLanguageModel(nn.Module):
                 x = x.view((self.embedding.num_embeddings,))
                 x = F.softmax(x)
                 x = x.cpu()
-                x = x / x.sum()
                 current_char = np.random.multinomial(1, x).nonzero()[0].item()
                 sentence.append(current_char)
         return sentence
@@ -115,7 +114,6 @@ class SimpleLSTMLanguageModel(nn.Module):
                 x = x.view((self.embedding.num_embeddings,))
                 x = F.softmax(x)
                 x = x.cpu()
-                x = x / x.sum()
                 current_char = np.random.multinomial(1, x).nonzero()[0].item()
                 sentence.append(current_char)
         return sentence
@@ -179,7 +177,6 @@ class SimpleGRULanguageModel(nn.Module):
                 x = x.view((self.embedding.num_embeddings,))
                 x = F.softmax(x)
                 x = x.cpu()
-                x = x / x.sum()
                 current_char = np.random.multinomial(1, x).nonzero()[0].item()
                 sentence.append(current_char)
         return sentence
