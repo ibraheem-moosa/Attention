@@ -129,7 +129,7 @@ if __name__ == '__main__':
     @trainer.on(Events.ITERATION_COMPLETED(every=1024))
     def generate_sentence(trainer):
         print('Generated sentence: {}\n'.format(model.generate_sentence(seq_len)))
-    @trainer.on(Events.ITERATION_COMPLETED(every=1024))
+    @trainer.on(Events.ITERATION_COMPLETED(every=512))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
