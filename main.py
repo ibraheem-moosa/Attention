@@ -62,13 +62,14 @@ if __name__ == '__main__':
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
+    """
     lr_finder_baselr = 1e-5
     lr_finder_maxlr = 1e-1
     lr_finder_steps = 100
     lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
     lr_finder_scheduler = LambdaLR(optimizer,
             lambda e: lr_finder_baselr * (lr_finder_gamma ** e))
-
+    """
     def update_model(trainer, batch):
         model.train()
         optimizer.zero_grad()
@@ -80,7 +81,7 @@ if __name__ == '__main__':
         clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         return loss.item()
-
+    """
     lr_finder = Engine(update_model)
     lr_finder_tr_losses = []
     @lr_finder.on(Events.ITERATION_COMPLETED)
@@ -96,7 +97,7 @@ if __name__ == '__main__':
         sys.exit()
 
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
-
+    """
     epochs = 1
     # scheduler = OneCycleLR(optimizer, max_lr=5e-4, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     trainer = Engine(update_model)
