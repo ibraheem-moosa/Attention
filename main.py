@@ -128,7 +128,7 @@ if __name__ == '__main__':
     #@trainer.on(Events.EPOCH_COMPLETED)
     @trainer.on(Events.ITERATION_COMPLETED(every=1024))
     def generate_sentence(trainer):
-        print('Generated sentence: {}\n'.formate(model.generate_sentence(seq_len)))
+        print('Generated sentence: {}\n'.format(model.generate_sentence(seq_len)))
     @trainer.on(Events.ITERATION_COMPLETED(every=1024))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
