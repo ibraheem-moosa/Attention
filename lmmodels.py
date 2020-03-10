@@ -8,7 +8,7 @@ class SimpleRNNLanguageModel(nn.Module):
 
     def __init__(self, vocab_size, emb_size, hidden_size, num_layers):
         super(SimpleRNNLanguageModel, self).__init__()
-        self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
+        self.embedding = nn.Embedding(vocab_size, emb_size)
         self.rnn = nn.RNN(
                 input_size=emb_size,
                 hidden_size=hidden_size,
@@ -49,7 +49,7 @@ class SimpleLSTMLanguageModel(nn.Module):
 
     def __init__(self, vocab_size, emb_size, hidden_size, num_layers):
         super(SimpleLSTMLanguageModel, self).__init__()
-        self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
+        self.embedding = nn.Embedding(vocab_size, emb_size)
         self.rnn = nn.LSTM(
                 input_size=emb_size,
                 hidden_size=hidden_size,
@@ -90,7 +90,7 @@ class SimpleGRULanguageModel(nn.Module):
 
     def __init__(self, vocab_size, emb_size, hidden_size, num_layers):
         super(SimpleGRULanguageModel, self).__init__()
-        self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
+        self.embedding = nn.Embedding(vocab_size, emb_size)
         self.rnn = nn.GRU(
                 input_size=emb_size,
                 hidden_size=hidden_size,
