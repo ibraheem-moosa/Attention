@@ -45,7 +45,7 @@ class SimpleRNNLanguageModel(nn.Module):
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
-                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long).to(device)
+                x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
                 x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
@@ -106,7 +106,7 @@ class SimpleLSTMLanguageModel(nn.Module):
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
-                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long).to(device)
+                x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
                 x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
@@ -169,7 +169,7 @@ class SimpleGRULanguageModel(nn.Module):
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
-                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long).to(device)
+                x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
                 x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)

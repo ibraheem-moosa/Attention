@@ -126,10 +126,10 @@ if __name__ == '__main__':
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
     #@trainer.on(Events.EPOCH_COMPLETED)
-    @trainer.on(Events.ITERATION_COMPLETED(every=512))
+    @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def generate_sentence(trainer):
         print('Generated sentence: {}\n'.format(model.generate_sentence(seq_len)))
-    @trainer.on(Events.ITERATION_COMPLETED(every=512))
+    @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
