@@ -40,7 +40,7 @@ class SimpleRNNLanguageModel(nn.Module):
         self.eval()
         with torch.no_grad():
             sentence = []
-            current_char = np.random.randint(self.vocab_size)
+            current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
             for i in range(length):
@@ -100,7 +100,7 @@ class SimpleLSTMLanguageModel(nn.Module):
         self.eval()
         with torch.no_grad():
             sentence = []
-            current_char = np.random.randint(self.vocab_size)
+            current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
             for i in range(length):
@@ -162,7 +162,7 @@ class SimpleGRULanguageModel(nn.Module):
         self.eval()
         with torch.no_grad():
             sentence = []
-            current_char = np.random.randint(self.vocab_size)
+            current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
             for i in range(length):
