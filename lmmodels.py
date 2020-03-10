@@ -52,7 +52,7 @@ class SimpleRNNLanguageModel(nn.Module):
                 x = self.out_emb(x)
                 x = x.view((self.embedding.num_embeddings,))
                 x = F.softmax(x)
-                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
+                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x.cpu())
                 sentence.append(current_char)
         return sentence
 
@@ -112,7 +112,7 @@ class SimpleLSTMLanguageModel(nn.Module):
                 x = self.out_emb(x)
                 x = x.view((self.embedding.num_embeddings,))
                 x = F.softmax(x)
-                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
+                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x.cpu())
                 sentence.append(current_char)
         return sentence
 
@@ -174,7 +174,7 @@ class SimpleGRULanguageModel(nn.Module):
                 x = self.out_emb(x)
                 x = x.view((self.embedding.num_embeddings,))
                 x = F.softmax(x)
-                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
+                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x.cpu())
                 sentence.append(current_char)
         return sentence
 
