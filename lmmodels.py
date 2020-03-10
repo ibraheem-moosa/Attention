@@ -1,4 +1,5 @@
 "Language Models"
+import numpy as np
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -35,6 +36,25 @@ class SimpleRNNLanguageModel(nn.Module):
         x = self.out_emb(x)
         return x
 
+    def generate_sentence(self, length):
+        self.eval()
+        with torch.no_grad():
+            sentence = []
+            current_char = np.random.randint(self.vocab_size)
+            sentence.append(current_char)
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
+            for i in range(length):
+                x = torch.zeros((1, 1, self.vocab_size))
+                x[current_char] = 1
+                x = self.embedding(x)
+                x, h = self.rnn(x, h)
+                x = self.projection(F.relu(x))
+                x = self.out_emb(x)
+                x = x.view((self.vocab_size,)).numpy()
+                x = F.softmax(x)
+                current_char = np.random.choice(np.arange(self.vocab_size), p=x)
+                sentence.append(current_char)
+        return sentence
 
 class RNNSharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
     "A one directional RNN that shares input and output embedding and predicts next character."
@@ -76,6 +96,27 @@ class SimpleLSTMLanguageModel(nn.Module):
         x = self.out_emb(x)
         return x
 
+    def generate_sentence(self, length):
+        self.eval()
+        with torch.no_grad():
+            sentence = []
+            current_char = np.random.randint(self.vocab_size)
+            sentence.append(current_char)
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
+            for i in range(length):
+                x = torch.zeros((1, 1, self.vocab_size))
+                x[current_char] = 1
+                x = self.embedding(x)
+                x, h = self.rnn(x, h)
+                x = self.projection(F.relu(x))
+                x = self.out_emb(x)
+                x = x.view((self.vocab_size,)).numpy()
+                x = F.softmax(x)
+                current_char = np.random.choice(np.arange(self.vocab_size), p=x)
+                sentence.append(current_char)
+        return sentence
+
+
 
 class LSTMSharedEmbeddingLanguageModel(SimpleLSTMLanguageModel):
     "A one directional LSTM RNN that shares input and output embedding and predicts next character."
@@ -116,6 +157,27 @@ class SimpleGRULanguageModel(nn.Module):
         x = self.projection(F.relu(x))
         x = self.out_emb(x)
         return x
+
+    def generate_sentence(self, length):
+        self.eval()
+        with torch.no_grad():
+            sentence = []
+            current_char = np.random.randint(self.vocab_size)
+            sentence.append(current_char)
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
+            for i in range(length):
+                x = torch.zeros((1, 1, self.vocab_size))
+                x[current_char] = 1
+                x = self.embedding(x)
+                x, h = self.rnn(x, h)
+                x = self.projection(F.relu(x))
+                x = self.out_emb(x)
+                x = x.view((self.vocab_size,)).numpy()
+                x = F.softmax(x)
+                current_char = np.random.choice(np.arange(self.vocab_size), p=x)
+                sentence.append(current_char)
+        return sentence
+
 
 class GRUSharedEmbeddingLanguageModel(SimpleGRULanguageModel):
     "A one directional GRU RNN that shares input and output embedding and predicts next character."
