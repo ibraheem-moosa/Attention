@@ -58,7 +58,7 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 16
     num_layers = 2
-    lr = 1e-5
+    lr = 1e-6
     model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
@@ -98,7 +98,7 @@ if __name__ == '__main__':
 
     # lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
     """
-    epochs = 10
+    epochs = 1
     # scheduler = OneCycleLR(optimizer, max_lr=5e-4, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
     trainer = Engine(update_model)
     metrics = {
