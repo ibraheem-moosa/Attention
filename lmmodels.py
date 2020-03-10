@@ -37,14 +37,15 @@ class SimpleRNNLanguageModel(nn.Module):
         return x
 
     def generate_sentence(self, length):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
             current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
-            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
-                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long)
+                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long).to(device)
                 x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
@@ -97,14 +98,15 @@ class SimpleLSTMLanguageModel(nn.Module):
         return x
 
     def generate_sentence(self, length):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
             current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
-            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
-                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long)
+                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long).to(device)
                 x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
@@ -159,14 +161,15 @@ class SimpleGRULanguageModel(nn.Module):
         return x
 
     def generate_sentence(self, length):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
             current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
-            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
-                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long)
+                x = torch.zeros((1, 1, self.embedding.num_embeddings), dtype=torch.long).to(device)
                 x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
