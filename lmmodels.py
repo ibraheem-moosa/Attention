@@ -181,6 +181,7 @@ class SimpleGRULanguageModel(nn.Module):
                 x = x.cpu()
                 x = x / x.sum()
                 current_char = np.random.multinomial(1, x)
+                print(current_char)
                 sentence.append(current_char)
         return sentence
 
