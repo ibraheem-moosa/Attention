@@ -44,7 +44,7 @@ if __name__ == '__main__':
     va_ds = text8dataset.Text8CharDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=seq_len, gap=seq_len)
     te_ds = text8dataset.Text8CharDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, gap=seq_len)
     ds_len = len(tr_ds)
-    print(ds_len, seq_len, vocab_size)
+    print(ds_len, seq_len)
 
     bs = 128
     va_bs = bs
