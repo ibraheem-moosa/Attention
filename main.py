@@ -34,20 +34,18 @@ class CrossEntropyLanguageModel(nn.Module):
 if __name__ == '__main__':
     checkpoint_dir = sys.argv[2]
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    ds = text8dataset.Text8CharDataSet(sys.argv[1], seq_len=100)
-    ds_len = len(ds)
-    print(ds_len, ds.vocab_size)
-    indices = list(range(ds_len))
-    random.seed(42)
-    random.shuffle(indices)
-    te_ratio = 0.01
-    te_ds_len = int(ds_len * te_ratio)
-    va_ratio = 0.04
-    va_ds_len = int(ds_len * va_ratio)
-    tr_indices = indices[:-va_ds_len-te_ds_len]
-    va_indices = indices[-va_ds_len-te_ds_len:-te_ds_len]
-    te_indices = indices[-te_ds_len:]
-    tr_ds, va_ds, te_ds = Subset(ds, tr_indices), Subset(ds, va_indices), Subset(ds, te_indices)
+    seq_len = 10
+    with open(sys.argv[1]) as f:
+        text = f.read()
+    tr_text_len = int(0.95 * len(text))
+    va_text_len = int(0.04 * len(text))
+    te_text_len = int(0.01 * len(text))
+    tr_ds = text8dataset.Text8CharDataSet(text[:tr_text_len], seq_len=seq_len, gap=1)
+    va_ds = text8dataset.Text8CharDataSet(text[tr_text_len:tr_text_len+va_text_len], seq_len=seq_len, gap=seq_len)
+    te_ds = text8dataset.Text8CharDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, gap=seq_len)
+    ds_len = len(tr_ds)
+    print(ds_len, seq_len, vocab_size)
+
     bs = 128
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
@@ -57,9 +55,9 @@ if __name__ == '__main__':
 
     hidden_size = 1024
     emb_size = 16
-    num_layers = 2
-    lr = 1e-6
-    model = lmmodels.SimpleGRULanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
+    num_layers = 4
+    lr = 1e-3
+    model = lmmodels.GRUSharedEmbeddingLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
     """
@@ -112,16 +110,16 @@ if __name__ == '__main__':
     def scheduler_step(trainer):
         scheduler.step()
     """
-    
+    """
     @trainer.on(Events.STARTED)
     def load_model_weights(trainer):
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
         optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
+    """
     @trainer.on(Events.STARTED)
     def reset_lr(trainer):
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
-    
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
