@@ -46,7 +46,6 @@ class SimpleRNNLanguageModel(nn.Module):
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
                 x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
-                x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
@@ -107,7 +106,6 @@ class SimpleLSTMLanguageModel(nn.Module):
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
                 x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
-                x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
@@ -170,7 +168,6 @@ class SimpleGRULanguageModel(nn.Module):
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
                 x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
-                x[:,:,current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
