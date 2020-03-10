@@ -57,7 +57,7 @@ if __name__ == '__main__':
     emb_size = 16
     num_layers = 4
     lr = 1e-3
-    model = lmmodels.GRUSharedEmbeddingLanguageModel(ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
+    model = lmmodels.GRUSharedEmbeddingLanguageModel(tr_ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
     """
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     trainer = Engine(update_model)
     metrics = {
             'acc': Accuracy(
-                output_transform=lambda y_pred: (y_pred[0].view((-1, ds.vocab_size)), y_pred[1].view((-1,)))),
+                output_transform=lambda y_pred: (y_pred[0].view((-1, tr_ds.vocab_size)), y_pred[1].view((-1,)))),
             'ce': Loss(criterion)}
     evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
 
