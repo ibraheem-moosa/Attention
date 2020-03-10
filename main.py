@@ -34,7 +34,7 @@ class CrossEntropyLanguageModel(nn.Module):
 if __name__ == '__main__':
     checkpoint_dir = sys.argv[2]
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    seq_len = 10
+    seq_len = 100
     with open(sys.argv[1]) as f:
         text = f.read()
     tr_text_len = int(0.95 * len(text))
@@ -110,12 +110,10 @@ if __name__ == '__main__':
     def scheduler_step(trainer):
         scheduler.step()
     """
-    """
     @trainer.on(Events.STARTED)
     def load_model_weights(trainer):
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
         optimizer.load_state_dict(torch.load(checkpoint_dir + '/optimizer.pth'))
-    """
     @trainer.on(Events.STARTED)
     def reset_lr(trainer):
         for param_group in optimizer.param_groups:
@@ -125,6 +123,9 @@ if __name__ == '__main__':
         print(datetime.datetime.now())
         print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
     #@trainer.on(Events.EPOCH_COMPLETED)
+    @trainer.on(Events.ITERATION_COMPLETED(every=1024))
+    def generate_sentence(trainer):
+        print('Generated sentence: {}\n'.formate(model.generate_sentence(seq_len)))
     @trainer.on(Events.ITERATION_COMPLETED(every=1024))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
