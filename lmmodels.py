@@ -44,15 +44,15 @@ class SimpleRNNLanguageModel(nn.Module):
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
             for i in range(length):
-                x = torch.zeros((1, 1, self.vocab_size))
+                x = torch.zeros((1, 1, self.embedding.num_embeddings))
                 x[current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
                 x = self.out_emb(x)
-                x = x.view((self.vocab_size,)).numpy()
+                x = x.view((self.embedding.num_embeddings,)).numpy()
                 x = F.softmax(x)
-                current_char = np.random.choice(np.arange(self.vocab_size), p=x)
+                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
                 sentence.append(current_char)
         return sentence
 
@@ -104,15 +104,15 @@ class SimpleLSTMLanguageModel(nn.Module):
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
             for i in range(length):
-                x = torch.zeros((1, 1, self.vocab_size))
+                x = torch.zeros((1, 1, self.embedding.num_embeddings))
                 x[current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
                 x = self.out_emb(x)
-                x = x.view((self.vocab_size,)).numpy()
+                x = x.view((self.embedding.num_embeddings,)).numpy()
                 x = F.softmax(x)
-                current_char = np.random.choice(np.arange(self.vocab_size), p=x)
+                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
                 sentence.append(current_char)
         return sentence
 
@@ -166,15 +166,15 @@ class SimpleGRULanguageModel(nn.Module):
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size))
             for i in range(length):
-                x = torch.zeros((1, 1, self.vocab_size))
+                x = torch.zeros((1, 1, self.embedding.num_embeddings))
                 x[current_char] = 1
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
                 x = self.out_emb(x)
-                x = x.view((self.vocab_size,)).numpy()
+                x = x.view((self.embedding.num_embeddings,)).numpy()
                 x = F.softmax(x)
-                current_char = np.random.choice(np.arange(self.vocab_size), p=x)
+                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
                 sentence.append(current_char)
         return sentence
 
