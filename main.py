@@ -112,7 +112,7 @@ if __name__ == '__main__':
     def scheduler_step(trainer):
         scheduler.step()
     """
-    """
+    
     @trainer.on(Events.STARTED)
     def load_model_weights(trainer):
         model.load_state_dict(torch.load(checkpoint_dir + '/model.pth'))
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     def reset_lr(trainer):
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
-    """
+    
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
