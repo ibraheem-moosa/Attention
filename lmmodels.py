@@ -54,7 +54,7 @@ class SimpleRNNLanguageModel(nn.Module):
                 x = F.softmax(x)
                 x = x.cpu()
                 x = x / x.sum()
-                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
+                current_char = np.random.multinomial(self.embedding.num_embeddings, x)
                 sentence.append(current_char)
         return sentence
 
@@ -116,7 +116,7 @@ class SimpleLSTMLanguageModel(nn.Module):
                 x = F.softmax(x)
                 x = x.cpu()
                 x = x / x.sum()
-                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
+                current_char = np.random.multinomial(self.embedding.num_embeddings, x)
                 sentence.append(current_char)
         return sentence
 
@@ -180,7 +180,7 @@ class SimpleGRULanguageModel(nn.Module):
                 x = F.softmax(x)
                 x = x.cpu()
                 x = x / x.sum()
-                current_char = np.random.choice(np.arange(self.embedding.num_embeddings), p=x)
+                current_char = np.random.multinomial(self.embedding.num_embeddings, x)
                 sentence.append(current_char)
         return sentence
 
