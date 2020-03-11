@@ -77,17 +77,22 @@ class SimpleLanguageModel(pl.LightningModule):
         x = self.out_emb(x)
         return x
 
-    def generate_sentence(self, length, current_char=None):
+    def generate_sentence(self, length, start_with=None):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
-            if current_char is None:
-                current_char = np.random.randint(self.embedding.num_embeddings)
-            sentence.append(current_char)
+            if start_with is None:
+                start_with = [np.random.randint(self.embedding.num_embeddings)]
+            sentence.append(start_with[0])
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
+            for current_token in start_with:
+                x = torch.tensor(current_token, dtype=torch.long).to(device).reshape((1, 1))
+                x = self.embedding(x)
+                x, h = self.rnn(x, h)
+                sentence.append(current_token)
             for i in range(length):
-                x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
+                x = torch.tensor(current_token, dtype=torch.long).to(device).reshape((1, 1))
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
@@ -96,8 +101,8 @@ class SimpleLanguageModel(pl.LightningModule):
                 x = F.softmax(x, dim=0)
                 x = x.cpu().numpy().astype(np.float64)
                 x /= x.sum()
-                current_char = np.random.multinomial(1, x).nonzero()[0].item()
-                sentence.append(current_char)
+                current_token = np.random.multinomial(1, x).nonzero()[0].item()
+                sentence.append(current_token)
         return sentence
 
     def training_step(self, train_batch, batch_idx):
