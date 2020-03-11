@@ -60,7 +60,8 @@ class SimpleLanguageModel(pl.LightningModule):
             rnn_type,
             prepare_data_callback,
             tr_dl,
-            va_dl):
+            va_dl,
+            te_dl):
         super(SimpleRNNLanguageModel, self).__init__()
         self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
         self.rnn_type = rnn_type
@@ -72,6 +73,7 @@ class SimpleLanguageModel(pl.LightningModule):
         self.prepare_data_callback = prepare_data_callback
         self.tr_dl = tr_dl
         self.va_dl = va_dl
+        self.te_dl = te_dl
 
     def initialize(self):
         if self.rnn_type == 'rnn-relu':
@@ -146,7 +148,10 @@ class SimpleLanguageModel(pl.LightningModule):
         return self.tr_dl
 
     def val_dataloader(self):
-        return va_dl
+        return self.va_dl
+
+    def test_dataloader(self):
+        return self.te_dl
 
 
 
