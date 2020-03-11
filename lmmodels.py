@@ -93,21 +93,20 @@ class SimpleLanguageModel(pl.LightningModule):
         return x
 
     def generate_sentence(self, length, start_with=None):
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
             if start_with is None:
                 start_with = [np.random.randint(self.embedding.num_embeddings)]
             sentence.append(start_with[0])
-            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).type_as(self.embedding.weight.type())
             for current_token in start_with:
-                x = torch.tensor(current_token, dtype=torch.long).to(device).reshape((1, 1))
+                x = torch.tensor(current_token, dtype=torch.long).type_as(self.embedding.weight.type()).reshape((1, 1))
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 sentence.append(current_token)
             for i in range(length):
-                x = torch.tensor(current_token, dtype=torch.long).to(device).reshape((1, 1))
+                x = torch.tensor(current_token, dtype=torch.long).type_as(self.embedding.weight.type()).reshape((1, 1))
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
