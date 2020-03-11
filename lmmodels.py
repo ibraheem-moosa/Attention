@@ -2,8 +2,9 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+import pythorch_lightning as pl
 
-class SimpleLanguageModel(nn.Module):
+class SimpleLanguageModel(pl.LightningModule):
     "A simple one directional RNN that predicts next character."
 
     def __init__(self, vocab_size, emb_size, hidden_size, num_layers, rnn_type):
