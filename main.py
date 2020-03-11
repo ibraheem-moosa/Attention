@@ -129,7 +129,7 @@ if __name__ == '__main__':
     @trainer.on(Events.ITERATION_COMPLETED(every=128))
     def generate_sentence(trainer):
         try:
-            print('Generated sentence: {}\n'.format(''.join([tr_ds.index_to_char[i] for i in model.generate_sentence(seq_len)])))
+            print('Generated sentence: {}\n'.format(''.join([tr_ds.index_to_char[i] for i in model.generate_sentence(seq_len, tr_ds.char_to_index[' '])])))
         except:
             print('Sentence generation failed')
     @trainer.on(Events.ITERATION_COMPLETED(every=128))

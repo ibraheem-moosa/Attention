@@ -36,12 +36,13 @@ class SimpleRNNLanguageModel(nn.Module):
         x = self.out_emb(x)
         return x
 
-    def generate_sentence(self, length):
+    def generate_sentence(self, length, current_char=None):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
-            current_char = np.random.randint(self.embedding.num_embeddings)
+            if current_char is None:
+                current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
@@ -98,12 +99,13 @@ class SimpleLSTMLanguageModel(nn.Module):
         x = self.out_emb(x)
         return x
 
-    def generate_sentence(self, length):
+    def generate_sentence(self, length, current_char=None):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
-            current_char = np.random.randint(self.embedding.num_embeddings)
+            if current_char is None:
+                current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
@@ -162,12 +164,13 @@ class SimpleGRULanguageModel(nn.Module):
         x = self.out_emb(x)
         return x
 
-    def generate_sentence(self, length):
+    def generate_sentence(self, length, current_char=None):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.eval()
         with torch.no_grad():
             sentence = []
-            current_char = np.random.randint(self.embedding.num_embeddings)
+            if current_char is None:
+                current_char = np.random.randint(self.embedding.num_embeddings)
             sentence.append(current_char)
             h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
             for i in range(length):
