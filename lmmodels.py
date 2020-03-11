@@ -14,6 +14,40 @@ class CrossEntropyLanguageModel(nn.Module):
         targ = targ.view((-1,))
         return self.ce(inp, targ)
 
+def make_rnn(rnn_type, input_size, hidden_size, num_layers):
+    if rnn_type == 'rnn-relu':
+            return nn.RNN(
+                input_size=input_size,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                nonlinearity='relu',
+                bias=False,
+                batch_first=True)
+        elif rnn_type == 'rnn-tanh':
+            return nn.RNN(
+                input_size=input_size,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                nonlinearity='tanh',
+                bias=False,
+                batch_first=True)
+        elif rnn_type == 'gru':
+            return nn.GRU(
+                input_size=input_size,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                bias=False,
+                batch_first=True)
+        elif rnn_type == 'lstm':
+            return nn.LSTM(
+                input_size=input_size,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                bias=False,
+                batch_first=True)
+        else:
+            raise ValueError('rnn_type {} not supported'.format(rnn_type))
+
 
 class SimpleLanguageModel(pl.LightningModule):
     "A simple one directional RNN that predicts next character."
@@ -22,38 +56,7 @@ class SimpleLanguageModel(pl.LightningModule):
         super(SimpleRNNLanguageModel, self).__init__()
         self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
         self.rnn_type = rnn_type
-        if rnn_type == 'rnn-relu':
-            self.rnn = nn.RNN(
-                input_size=emb_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                nonlinearity='relu',
-                bias=False,
-                batch_first=True)
-        elif rnn_type == 'rnn-tanh':
-            self.rnn = nn.RNN(
-                input_size=emb_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                nonlinearity='tanh',
-                bias=False,
-                batch_first=True)
-        elif rnn_type == 'gru':
-            self.rnn = nn.GRU(
-                input_size=emb_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                bias=False,
-                batch_first=True)
-        elif rnn_type == 'lstm':
-            self.rnn = nn.LSTM(
-                input_size=emb_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                bias=False,
-                batch_first=True)
-        else:
-            raise ValueError('rnn_type {} not supported'.format(rnn_type))
+        self.rnn = make_rnn(rnn_type, emb_size, hidden_size, num_layers)
         self.projection = nn.Linear(hidden_size, emb_size, bias=False)
         self.out_emb = nn.Linear(emb_size, vocab_size, bias=False)
         self.initialize()
