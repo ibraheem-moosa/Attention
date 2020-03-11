@@ -59,7 +59,8 @@ class SimpleLanguageModel(pl.LightningModule):
             num_layers, 
             rnn_type,
             prepare_data_callback,
-            tr_dl):
+            tr_dl,
+            va_dl):
         super(SimpleRNNLanguageModel, self).__init__()
         self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
         self.rnn_type = rnn_type
@@ -70,6 +71,7 @@ class SimpleLanguageModel(pl.LightningModule):
         self.criterion = CrossEntropyLanguageModel()
         self.prepare_data_callback = prepare_data_callback
         self.tr_dl = tr_dl
+        self.va_dl = va_dl
 
     def initialize(self):
         if self.rnn_type == 'rnn-relu':
@@ -142,6 +144,9 @@ class SimpleLanguageModel(pl.LightningModule):
 
     def train_dataloader(self):
         return self.tr_dl
+
+    def val_dataloader(self):
+        return va_dl
 
 
 
