@@ -57,6 +57,7 @@ class SimpleLanguageModel(pl.LightningModule):
         self.projection = nn.Linear(hidden_size, emb_size, bias=False)
         self.out_emb = nn.Linear(emb_size, vocab_size, bias=False)
         self.initialize()
+        self.criterion = CrossEntropyLanguageModel()
 
     def initialize(self):
         if self.rnn_type == 'rnn-relu':
@@ -75,6 +76,16 @@ class SimpleLanguageModel(pl.LightningModule):
         x = self.projection(F.relu(x))
         x = self.out_emb(x)
         return x
+
+    def training_step(self, train_batch, batch_idx):
+        x, y = train_batch
+        y_pred = self.forward(x)
+        loss = self.criterion(y_pred, y)
+
+        log = {'train_loss': loss}
+
+        return {'loss': loss, 'log': log}
+
 
 
 class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
