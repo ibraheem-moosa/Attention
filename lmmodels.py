@@ -86,6 +86,11 @@ class SimpleLanguageModel(pl.LightningModule):
 
         return {'loss': loss, 'log': log}
 
+    def validation_step(self, validation_batch, batch_idx):
+        x, y = validation_batch
+        y_pred = self.forward(x)
+        loss = self.criterion(y_pred, y)
+        return {'val_loss': loss}
 
 
 class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
