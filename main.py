@@ -14,9 +14,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter, defaultdict
 
-from ignite.engine import Events, Engine, create_supervised_trainer, create_supervised_evaluator
-from ignite.metrics import Accuracy, Loss
-
 import pytorch_lightning as pl
 
 import text8dataset
@@ -51,44 +48,4 @@ if __name__ == '__main__':
             vocab_size, emb_size, hidden_size, num_layers,
             'lstm', tr_dl, va_dl, te_dl)
     trainer = pl.Trainer()
-    def update_model(trainer, batch):
-        model.train()
-        optimizer.zero_grad()
-        x, y = batch
-        x, y = x.to(device), y.to(device)
-        y_pred = model(x)
-        loss = criterion(y_pred, y)
-        loss.backward()
-        clip_grad_norm_(model.parameters(), 0.25)
-        optimizer.step()
-        return loss.item()
-
     epochs = 25
-    scheduler = OneCycleLR(optimizer, max_lr=2e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
-    trainer = Engine(update_model)
-    metrics = {
-            'acc': Accuracy(
-                output_transform=lambda y_pred: (y_pred[0].view((-1, ds.vocab_size)), y_pred[1].view((-1,)))),
-            'ce': Loss(criterion)}
-    evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
-
-    @trainer.on(Events.ITERATION_COMPLETED)
-    def scheduler_step(trainer):
-        scheduler.step()
-    @trainer.on(Events.ITERATION_COMPLETED(every=16))
-    def log_tr_loss(trainer):
-        print(datetime.datetime.now())
-        print('Epoch {} Iter: {}: Loss: {:.6f}'.format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
-    @trainer.on(Events.EPOCH_COMPLETED)
-    def log_va_loss(trainer):
-        evaluator.run(va_dl)
-        metrics = evaluator.state.metrics
-        print('Epoch {}: Va Acc: {:.6f} Va Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
-        # scheduler.step(metrics['ce'])
-    @trainer.on(Events.COMPLETED)
-    def log_tr_loss(trainer):
-        evaluator.run(tr_dl)
-        metrics = evaluator.state.metrics
-        print('Epoch {}: Tr Acc: {:.6f} Tr Loss: {:.6f}'.format(trainer.state.epoch, metrics['acc'], metrics['ce']))
-
-    trainer.run(tr_dl, max_epochs=epochs)
