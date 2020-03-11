@@ -52,7 +52,13 @@ def make_rnn(rnn_type, input_size, hidden_size, num_layers):
 class SimpleLanguageModel(pl.LightningModule):
     "A simple one directional RNN that predicts next character."
 
-    def __init__(self, vocab_size, emb_size, hidden_size, num_layers, rnn_type):
+    def __init__(self, 
+            vocab_size, 
+            emb_size, 
+            hidden_size, 
+            num_layers, 
+            rnn_type,
+            prepare_data_callback):
         super(SimpleRNNLanguageModel, self).__init__()
         self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
         self.rnn_type = rnn_type
@@ -61,6 +67,7 @@ class SimpleLanguageModel(pl.LightningModule):
         self.out_emb = nn.Linear(emb_size, vocab_size, bias=False)
         self.initialize()
         self.criterion = CrossEntropyLanguageModel()
+        self.prepare_data_callback = prepare_data_callback
 
     def initialize(self):
         if self.rnn_type == 'rnn-relu':
@@ -127,6 +134,9 @@ class SimpleLanguageModel(pl.LightningModule):
       avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
       log = {'val_loss': avg_loss}
       return {'avg_val_loss': avg_loss, 'log': log}
+
+  def prepare_data(self):
+      self.prepare_data_callback()
 
 
 class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
