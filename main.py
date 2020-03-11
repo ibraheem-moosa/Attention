@@ -51,13 +51,6 @@ if __name__ == '__main__':
             vocab_size, emb_size, hidden_size, num_layers,
             'lstm', tr_dl, va_dl, te_dl)
     trainer = pl.Trainer()
-    lr_finder_baselr = 1e-4
-    lr_finder_maxlr = 5e0
-    lr_finder_steps = 100
-    lr_finder_gamma = (lr_finder_maxlr / lr_finder_baselr) ** (1 / lr_finder_steps)
-    lr_finder_scheduler = LambdaLR(optimizer,
-            lambda e: lr_finder_baselr * (lr_finder_gamma ** e))
-
     def update_model(trainer, batch):
         model.train()
         optimizer.zero_grad()
@@ -69,22 +62,6 @@ if __name__ == '__main__':
         clip_grad_norm_(model.parameters(), 0.25)
         optimizer.step()
         return loss.item()
-
-    lr_finder = Engine(update_model)
-    lr_finder_tr_losses = []
-    @lr_finder.on(Events.ITERATION_COMPLETED)
-    def step_lr_finder_sched(lr_finder):
-        lr_finder_scheduler.step()
-        lr_finder_tr_losses.append(lr_finder.state.output)
-        if math.isnan(lr_finder.state.output):
-            lr_finder.fire_event(Events.COMPLETED)
-    @lr_finder.on(Events.COMPLETED)
-    def set_lr(lr_finder):
-        plt.plot(np.minimum(lr_finder_tr_losses, 10))
-        plt.show()
-        sys.exit()
-
-    lr_finder.run(tr_dl, epoch_length=lr_finder_steps)
 
     epochs = 25
     scheduler = OneCycleLR(optimizer, max_lr=2e-2, epochs=epochs, steps_per_epoch=len(tr_dl), pct_start=0.5, anneal_strategy='linear')
