@@ -155,9 +155,6 @@ class SimpleLanguageModel(pl.LightningModule):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [50000, 1000000, 200000])
         return [optimizer], [{'scheduler': scheduler, 'interval': 'step'}]
 
-    def on_after_backward(self):
-        torch.nn.utils.clip_grad_norm_(self.parameters(), 0.25)
-
 
 class SharedEmbeddingLanguageModel(SimpleLanguageModel):
     "A one directional RNN that shares input and output embedding and predicts next character."
