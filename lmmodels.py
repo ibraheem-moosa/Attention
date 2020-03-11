@@ -58,7 +58,6 @@ class SimpleLanguageModel(pl.LightningModule):
             hidden_size, 
             num_layers, 
             rnn_type,
-            prepare_data_callback,
             tr_dl,
             va_dl,
             te_dl):
@@ -142,7 +141,7 @@ class SimpleLanguageModel(pl.LightningModule):
         return {'avg_val_loss': avg_loss, 'log': log}
 
     def prepare_data(self):
-        self.prepare_data_callback()
+        pass
 
     def train_dataloader(self):
         return self.tr_dl
