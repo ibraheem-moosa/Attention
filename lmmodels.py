@@ -77,6 +77,29 @@ class SimpleLanguageModel(pl.LightningModule):
         x = self.out_emb(x)
         return x
 
+    def generate_sentence(self, length, current_char=None):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.eval()
+        with torch.no_grad():
+            sentence = []
+            if current_char is None:
+                current_char = np.random.randint(self.embedding.num_embeddings)
+            sentence.append(current_char)
+            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).to(device)
+            for i in range(length):
+                x = torch.tensor(current_char, dtype=torch.long).to(device).reshape((1, 1))
+                x = self.embedding(x)
+                x, h = self.rnn(x, h)
+                x = self.projection(F.relu(x))
+                x = self.out_emb(x)
+                x = x.view((self.embedding.num_embeddings,))
+                x = F.softmax(x, dim=0)
+                x = x.cpu().numpy().astype(np.float64)
+                x /= x.sum()
+                current_char = np.random.multinomial(1, x).nonzero()[0].item()
+                sentence.append(current_char)
+        return sentence
+
     def training_step(self, train_batch, batch_idx):
         x, y = train_batch
         y_pred = self.forward(x)
