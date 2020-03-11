@@ -152,7 +152,9 @@ class SimpleLanguageModel(pl.LightningModule):
     def test_dataloader(self):
         return self.te_dl
 
-
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        return optimizer
 
 
 class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
