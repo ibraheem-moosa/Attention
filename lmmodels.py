@@ -156,10 +156,8 @@ class SimpleLanguageModel(pl.LightningModule):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [50000, 1000000, 200000)]
         return [optimizer], [{'scheduler': scheduler, 'interval': 'step'}]
 
-    def optimizer_step(self, current_epoch, batch_idx, optimizer, optimizer_idx, second_order_closure=None):
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.25)
-        optimizer.step()
-        optimizer.zero_grad()
+    def on_after_backward(self):
+        torch.nn.utils.clip_grad_norm_(self.parameters(), 0.25)
 
 
 class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
