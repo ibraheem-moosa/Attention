@@ -132,7 +132,7 @@ if __name__ == '__main__':
             print('Generated sentence: {}\n'.format(''.join([tr_ds.index_to_char[i] for i in model.generate_sentence(seq_len, tr_ds.char_to_index[' '])])))
         except:
             print('Sentence generation failed')
-    @trainer.on(Events.ITERATION_COMPLETED(every=128))
+    @trainer.on(Events.ITERATION_COMPLETED(every=1024))
     def log_va_loss(trainer):
         evaluator.run(va_dl)
         metrics = evaluator.state.metrics
