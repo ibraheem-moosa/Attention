@@ -21,16 +21,6 @@ import text8dataset
 import lmmodels
 
 
-class CrossEntropyLanguageModel(nn.Module):
-    def __init__(self):
-        super(CrossEntropyLanguageModel, self).__init__()
-        self.ce = nn.CrossEntropyLoss()
-
-    def forward(self, inp, targ):
-        inp = inp.view((-1, inp.shape[-1]))
-        targ = targ.view((-1,))
-        return self.ce(inp, targ)
-
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     vocab_size = 10000
@@ -57,7 +47,7 @@ if __name__ == '__main__':
     num_layers = 1
     model = lmmodels.RNNLanguageModel(vocab_size, emb_size, hidden_size, num_layers, rnn_type='lstm').to(device)
     optimizer = Adam(model.parameters(), lr=22e-3)
-    criterion = CrossEntropyLanguageModel()
+    criterion = lmmodels.CrossEntropyLanguageModel()
     lr_finder_baselr = 1e-4
     lr_finder_maxlr = 5e0
     lr_finder_steps = 100

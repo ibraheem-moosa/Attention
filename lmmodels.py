@@ -4,6 +4,17 @@ from torch import nn
 import torch.nn.functional as F
 import pythorch_lightning as pl
 
+class CrossEntropyLanguageModel(nn.Module):
+    def __init__(self):
+        super(CrossEntropyLanguageModel, self).__init__()
+        self.ce = nn.CrossEntropyLoss()
+
+    def forward(self, inp, targ):
+        inp = inp.view((-1, inp.shape[-1]))
+        targ = targ.view((-1,))
+        return self.ce(inp, targ)
+
+
 class SimpleLanguageModel(pl.LightningModule):
     "A simple one directional RNN that predicts next character."
 
