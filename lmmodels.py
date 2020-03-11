@@ -2,7 +2,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
-import pythorch_lightning as pl
+import pytorch_lightning as pl
 
 class CrossEntropyLanguageModel(nn.Module):
     def __init__(self):
@@ -16,37 +16,37 @@ class CrossEntropyLanguageModel(nn.Module):
 
 def make_rnn(rnn_type, input_size, hidden_size, num_layers):
     if rnn_type == 'rnn-relu':
-            return nn.RNN(
-                input_size=input_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                nonlinearity='relu',
-                bias=False,
-                batch_first=True)
-        elif rnn_type == 'rnn-tanh':
-            return nn.RNN(
-                input_size=input_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                nonlinearity='tanh',
-                bias=False,
-                batch_first=True)
-        elif rnn_type == 'gru':
-            return nn.GRU(
-                input_size=input_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                bias=False,
-                batch_first=True)
-        elif rnn_type == 'lstm':
-            return nn.LSTM(
-                input_size=input_size,
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                bias=False,
-                batch_first=True)
-        else:
-            raise ValueError('rnn_type {} not supported'.format(rnn_type))
+        return nn.RNN(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            nonlinearity='relu',
+            bias=False,
+            batch_first=True)
+    elif rnn_type == 'rnn-tanh':
+        return nn.RNN(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            nonlinearity='tanh',
+            bias=False,
+            batch_first=True)
+    elif rnn_type == 'gru':
+        return nn.GRU(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            bias=False,
+            batch_first=True)
+    elif rnn_type == 'lstm':
+        return nn.LSTM(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            bias=False,
+            batch_first=True)
+    else:
+        raise ValueError('rnn_type {} not supported'.format(rnn_type))
 
 
 class SimpleLanguageModel(pl.LightningModule):
@@ -69,7 +69,6 @@ class SimpleLanguageModel(pl.LightningModule):
         self.out_emb = nn.Linear(emb_size, vocab_size, bias=False)
         self.initialize()
         self.criterion = CrossEntropyLanguageModel()
-        self.prepare_data_callback = prepare_data_callback
         self.tr_dl = tr_dl
         self.va_dl = va_dl
         self.te_dl = te_dl
@@ -153,14 +152,14 @@ class SimpleLanguageModel(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [50000, 1000000, 200000)]
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [50000, 1000000, 200000])
         return [optimizer], [{'scheduler': scheduler, 'interval': 'step'}]
 
     def on_after_backward(self):
         torch.nn.utils.clip_grad_norm_(self.parameters(), 0.25)
 
 
-class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
+class SharedEmbeddingLanguageModel(SimpleLanguageModel):
     "A one directional RNN that shares input and output embedding and predicts next character."
 
     def __init__(self, 
