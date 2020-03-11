@@ -34,7 +34,7 @@ class CrossEntropyLanguageModel(nn.Module):
 if __name__ == '__main__':
     checkpoint_dir = sys.argv[2]
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    seq_len = 100
+    seq_len = 200
     with open(sys.argv[1]) as f:
         text = f.read()
     tr_text_len = int(0.95 * len(text))
