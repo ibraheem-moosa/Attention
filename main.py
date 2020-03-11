@@ -17,6 +17,8 @@ from collections import Counter, defaultdict
 from ignite.engine import Events, Engine, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss
 
+import pytorch_lightning as pl
+
 import text8dataset
 import lmmodels
 
@@ -45,9 +47,10 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 128
     num_layers = 1
-    model = lmmodels.RNNLanguageModel(vocab_size, emb_size, hidden_size, num_layers, rnn_type='lstm').to(device)
-    optimizer = Adam(model.parameters(), lr=22e-3)
-    criterion = lmmodels.CrossEntropyLanguageModel()
+    model = lmmodels.RNNLanguageModel(
+            vocab_size, emb_size, hidden_size, num_layers,
+            'lstm', tr_dl, va_dl, te_dl)
+    trainer = pl.Trainer()
     lr_finder_baselr = 1e-4
     lr_finder_maxlr = 5e0
     lr_finder_steps = 100
