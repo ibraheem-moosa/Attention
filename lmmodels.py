@@ -123,6 +123,11 @@ class SimpleLanguageModel(pl.LightningModule):
         loss = self.criterion(y_pred, y)
         return {'val_loss': loss}
 
+    def validation_end(self, outputs):
+      avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
+      log = {'val_loss': avg_loss}
+      return {'avg_val_loss': avg_loss, 'log': log}
+
 
 class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
     "A one directional RNN that shares input and output embedding and predicts next character."
