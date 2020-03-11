@@ -61,7 +61,7 @@ class SimpleLanguageModel(pl.LightningModule):
             tr_dl,
             va_dl,
             te_dl):
-        super(SimpleRNNLanguageModel, self).__init__()
+        super(SimpleLanguageModel, self).__init__()
         self.embedding = nn.Embedding(vocab_size, emb_size, max_norm=1.0)
         self.rnn_type = rnn_type
         self.rnn = make_rnn(rnn_type, emb_size, hidden_size, num_layers)
@@ -161,5 +161,5 @@ class SharedEmbeddingLanguageModel(SimpleRNNLanguageModel):
     "A one directional RNN that shares input and output embedding and predicts next character."
 
     def __init__(self, vocab_size, emb_size, hidden_size, num_layers):
-        super(RNNSharedEmbeddingLanguageModel, self).__init__(vocab_size, emb_size, hidden_size, num_layers)
+        super(SharedEmbeddingLanguageModel, self).__init__(vocab_size, emb_size, hidden_size, num_layers)
         self.out_emb.weight = self.embedding.weight
