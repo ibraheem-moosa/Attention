@@ -26,6 +26,7 @@ if __name__ == '__main__':
     seq_len = 20
     with open(sys.argv[1]) as f:
         text = f.read()
+    text = text[:20000]
     tr_text_len = int(0.95 * len(text))
     va_text_len = int(0.04 * len(text))
     te_text_len = int(0.01 * len(text))
@@ -44,8 +45,9 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 128
     num_layers = 1
-    model = lmmodels.RNNLanguageModel(
+    model = lmmodels.SimpleLanguageModel(
             vocab_size, emb_size, hidden_size, num_layers,
             'lstm', tr_dl, va_dl, te_dl)
-    trainer = pl.Trainer()
     epochs = 25
+    trainer = pl.Trainer(fast_dev_run=False, gradient_clip_val=0.25, max_epochs=epochs, default_save_path='./output/')
+    trainer.fit(model)
