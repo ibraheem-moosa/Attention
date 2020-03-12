@@ -34,7 +34,7 @@ if __name__ == '__main__':
     te_ds = text8dataset.Text8WordDataSet(text[tr_text_len+va_text_len:], seq_len=seq_len, vocab=tr_ds.vocab)
     ds_len = len(tr_ds)
     print(ds_len, seq_len, vocab_size)
-    bs = 128
+    bs = 256
     va_bs = bs
     tr_dl = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True)
     va_dl = DataLoader(va_ds, batch_size=va_bs)
@@ -63,5 +63,7 @@ if __name__ == '__main__':
             default_save_path='./output/',
             logger=logger,
             callbacks=[SentenceGenerationCallback()],
-            check_val_every_n_epoch=1)
+            check_val_every_n_epoch=1,
+            val_check_interval=100,
+            track_grad_norm=2)
     trainer.fit(model)
