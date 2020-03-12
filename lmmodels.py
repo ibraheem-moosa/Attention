@@ -3,6 +3,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
+import numpy as np
 
 class CrossEntropyLanguageModel(nn.Module):
     def __init__(self):
@@ -97,15 +98,18 @@ class SimpleLanguageModel(pl.LightningModule):
             sentence = []
             if start_with is None:
                 start_with = [np.random.randint(self.embedding.num_embeddings)]
-            sentence.append(start_with[0])
-            h = torch.zeros((self.rnn.num_layers, 1, self.rnn.hidden_size)).type_as(self.embedding.weight.type())
-            for current_token in start_with:
-                x = torch.tensor(current_token, dtype=torch.long).type_as(self.embedding.weight.type()).reshape((1, 1))
+            current_token = start_with[0]
+            x = torch.tensor(current_token, dtype=torch.long).to(next(self.parameters()).device).reshape((1, 1))
+            x = self.embedding(x)
+            x, h = self.rnn(x)
+            sentence.append(current_token)
+            for current_token in start_with[1:]:
+                x = torch.tensor(current_token, dtype=torch.long).to(next(self.parameters()).device).reshape((1, 1))
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 sentence.append(current_token)
             for i in range(length):
-                x = torch.tensor(current_token, dtype=torch.long).type_as(self.embedding.weight.type()).reshape((1, 1))
+                x = torch.tensor(current_token, dtype=torch.long).to(next(self.parameters()).device).reshape((1, 1))
                 x = self.embedding(x)
                 x, h = self.rnn(x, h)
                 x = self.projection(F.relu(x))
