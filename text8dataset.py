@@ -13,6 +13,7 @@ class Text8CharDataSet(Dataset):
         assert(self.vocab_size < 255)
         index_to_char = dict((i, c) for (i, c) in enumerate(chars))
         char_to_index = dict((c, i) for (i, c) in enumerate(chars))
+        self.vocab = (index_to_char, char_to_index)
         self.index_to_char = index_to_char
         self.char_to_index = char_to_index
         text = [self.char_to_index[c] for c in text]
@@ -48,6 +49,8 @@ class Text8WordDataSet(Dataset):
             word_to_index = defaultdict(lambda :0)
             word_to_index.update(((w, i) for (i, w) in enumerate(words)))
         self.vocab = (index_to_word, word_to_index)
+        self.index_to_word = index_to_word
+        self.word_to_index = word_to_index
         text = [word_to_index[w] for w in text]
         text = torch.tensor(text, dtype=torch.uint8)
         self.text = text
