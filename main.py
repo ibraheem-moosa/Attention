@@ -21,7 +21,6 @@ import lmmodels
 
 
 if __name__ == '__main__':
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     vocab_size = 10000
     seq_len = 20
     with open(sys.argv[1]) as f:
