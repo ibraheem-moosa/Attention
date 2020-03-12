@@ -56,7 +56,7 @@ if __name__ == '__main__':
     hidden_size = 1024
     emb_size = 16
     num_layers = 4
-    lr = 1e-3
+    lr = 1e-4
     model = lmmodels.SimpleGRULanguageModel(tr_ds.vocab_size, emb_size, hidden_size, num_layers).to(device)
     optimizer = Adam(model.parameters(), lr=lr)
     criterion = CrossEntropyLanguageModel()
@@ -110,7 +110,6 @@ if __name__ == '__main__':
     def scheduler_step(trainer):
         scheduler.step()
     """
-    """
     @trainer.on(Events.STARTED)
     def load_model_weights(trainer):
         try:
@@ -122,7 +121,6 @@ if __name__ == '__main__':
     def reset_lr(trainer):
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
-    """
     @trainer.on(Events.ITERATION_COMPLETED(every=16))
     def log_tr_loss(trainer):
         print(datetime.datetime.now())
