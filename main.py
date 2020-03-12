@@ -57,5 +57,12 @@ if __name__ == '__main__':
             except Exception as e:
                 print('Sentence generation failed with {}'.format(e))
                 raise e
-    trainer = pl.Trainer(fast_dev_run=False, gradient_clip_val=0.25, max_epochs=epochs, default_save_path='./output/', logger=logger, callbacks=[SentenceGenerationCallback()])
+    trainer = pl.Trainer(
+            fast_dev_run=False,
+            gradient_clip_val=0.25,
+            max_epochs=epochs,
+            default_save_path='./output/',
+            logger=logger,
+            callbacks=[SentenceGenerationCallback()],
+            check_val_every_n_epoch=1)
     trainer.fit(model)
