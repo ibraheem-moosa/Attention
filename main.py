@@ -26,7 +26,7 @@ if __name__ == '__main__':
     seq_len = 20
     with open(sys.argv[1]) as f:
         text = f.read()
-    text = text[:20000]
+    # text = text[:20000]
     tr_text_len = int(0.95 * len(text))
     va_text_len = int(0.04 * len(text))
     te_text_len = int(0.01 * len(text))
@@ -49,5 +49,6 @@ if __name__ == '__main__':
             vocab_size, emb_size, hidden_size, num_layers,
             'lstm', tr_dl, va_dl, te_dl)
     epochs = 25
-    trainer = pl.Trainer(fast_dev_run=False, gradient_clip_val=0.25, max_epochs=epochs, default_save_path='./output/')
+    logger = pl.loggers.TensorBoardLogger('./output/', name='language_model')
+    trainer = pl.Trainer(fast_dev_run=False, gradient_clip_val=0.25, max_epochs=epochs, default_save_path='./output/', logger=logger)
     trainer.fit(model)

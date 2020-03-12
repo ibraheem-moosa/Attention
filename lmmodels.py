@@ -131,7 +131,8 @@ class SimpleLanguageModel(pl.LightningModule):
         x, y = validation_batch
         y_pred = self.forward(x)
         loss = self.criterion(y_pred, y)
-        return {'val_loss': loss}
+        log = {'log': loss}
+        return {'val_loss': loss, 'log': log}
 
     def validation_end(self, outputs):
         avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
