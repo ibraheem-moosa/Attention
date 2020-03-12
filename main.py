@@ -50,5 +50,12 @@ if __name__ == '__main__':
             'lstm', tr_dl, va_dl, te_dl)
     epochs = 25
     logger = pl.loggers.TensorBoardLogger('./output/', name='language_model')
-    trainer = pl.Trainer(fast_dev_run=False, gradient_clip_val=0.25, max_epochs=epochs, default_save_path='./output/', logger=logger)
+    class SentenceGenerationCallback(pl.Callback):
+        def on_validation_end(self, trainer, pl_module):
+            try:
+                print('Generated sentence: {}\n'.format(' '.join([tr_ds.index_to_word[i] for i in pl_module.generate_sentence(seq_len * 2)])))
+            except Exception as e:
+                print('Sentence generation failed with {}'.format(e))
+                raise e
+    trainer = pl.Trainer(fast_dev_run=False, gradient_clip_val=0.25, max_epochs=epochs, default_save_path='./output/', logger=logger, callbacks=[SentenceGenerationCallback()])
     trainer.fit(model)
