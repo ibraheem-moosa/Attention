@@ -93,7 +93,6 @@ class SimpleLanguageModel(pl.LightningModule):
         return x
 
     def generate_sentence(self, length, start_with=None):
-        self.eval()
         with torch.no_grad():
             sentence = []
             if start_with is None:
