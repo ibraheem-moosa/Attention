@@ -66,5 +66,5 @@ if __name__ == '__main__':
             check_val_every_n_epoch=1,
             val_check_interval=100,
             track_grad_norm=2,
-            gpus=1)
+            gpus=1 if torch.cuda.is_available() else None)
     trainer.fit(model)
