@@ -65,5 +65,6 @@ if __name__ == '__main__':
             callbacks=[SentenceGenerationCallback()],
             check_val_every_n_epoch=1,
             val_check_interval=100,
-            track_grad_norm=2)
+            track_grad_norm=2,
+            gpus=1)
     trainer.fit(model)
