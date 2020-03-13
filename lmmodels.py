@@ -93,6 +93,7 @@ class SimpleLanguageModel(pl.LightningModule):
         return x
 
     def generate_sentence(self, length, start_with=None):
+        self.eval()
         with torch.no_grad():
             sentence = []
             if start_with is None:
@@ -119,6 +120,7 @@ class SimpleLanguageModel(pl.LightningModule):
                 x /= x.sum()
                 current_token = np.random.multinomial(1, x).nonzero()[0].item()
                 sentence.append(current_token)
+        self.train()
         return sentence
 
     def training_step(self, train_batch, batch_idx):
