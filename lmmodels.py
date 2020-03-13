@@ -157,7 +157,7 @@ class SimpleLanguageModel(pl.LightningModule):
         return self.te_dl
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-1)
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-2)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [50000, 1000000, 200000])
         return [optimizer], [{'scheduler': scheduler, 'interval': 'step'}]
 
