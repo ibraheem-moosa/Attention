@@ -1,6 +1,6 @@
 # Goal
 The goal of this project is threefold.
-1. Explore the capabilities of the Ignite and thinc.ai framework.
+1. Explore the capabilities of the Ignite, Lightning, Fast AI and thinc.ai framework.
 2. Understand the attention mechanism.
 3. Study the state of the art in language modeling.
 
